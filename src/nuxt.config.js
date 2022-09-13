@@ -89,9 +89,9 @@ export default {
         }
       }
     },
-    router: {
-      middleware: ['auth'],
-    },
+  },
+  router: {
+    middleware: ['auth'],
   },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
