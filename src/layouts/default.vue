@@ -16,6 +16,7 @@
       <v-btn 
         v-if="isLoggedIn"
         depressed
+        @click="logout"
       >
         ログアウト
       </v-btn>
@@ -38,6 +39,12 @@ export default {
     },
     isLoginPage() {
       return this.$route.name === 'login'
+    }
+  },
+  methods: {
+    logout() {
+      this.$auth.logout()
+      this.$auth.setUser(null)
     }
   }
 }
