@@ -43,10 +43,13 @@ export default {
       target: process.env.NODE_URL,
       pathRewrite: { '^/laravel': '/' }
     },
-    '/api/': { 
+    '/api/login': { 
       target: process.env.SERVER_ORIGIN, 
       pathRewrite: {'^/api/': '/'} 
-    }
+    },
+    '/api/': { 
+      target: process.env.SERVER_ORIGIN, 
+    },
   },
   publicRuntimeConfig: {
     AUTH_SCHEME: process.env.AUTH_SCHEME
@@ -55,7 +58,7 @@ export default {
   auth: {
     redirect: {
       home: '/',
-      login: '/auth/login',
+      login: '/login',
       logout: '/',
       callback: false,
     },
@@ -99,7 +102,9 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    'nuxt-webfontloader'
+    'nuxt-webfontloader',
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
   // GoogleFont読み込み
