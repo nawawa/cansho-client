@@ -25,6 +25,7 @@ export default {
   
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '@/plugins/sanitize-html'
   ],
   
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -104,7 +105,8 @@ export default {
   modules: [
     'nuxt-webfontloader',
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    'sanitize-html'
   ],
 
   // GoogleFont読み込み
