@@ -1,11 +1,9 @@
 <template>
   <div>
     <editor v-model="content" />
-
-    <div class="content">
-      <h3>Content</h3>
-      <pre><code>{{ content }}</code></pre>
-    </div>
+    <v-btn @click="put">
+      出力
+    </v-btn>
   </div>
 </template>
 
@@ -17,7 +15,12 @@ export default {
   },
   data: () => ({
     content: '<p>A Vue.js wrapper component for tiptap to use <code>v-model</code>.</p>',
-  })
+  }),
+  methods: {
+    put() {
+      console.log(this.content)
+    }
+  }
 }
 </script>
 
