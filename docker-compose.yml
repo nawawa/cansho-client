@@ -13,7 +13,8 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
       - NETWORK=cansho_development
-
+    networks:
+      - cansho_development
 networks:
   cansho_development:
     external: true
