@@ -1,8 +1,10 @@
 <template>
   <div>
     <!-- TODO：スタイルをつけるボタンの実装 エディタ全体のデザイン -->
-    <editor v-model="content" />
-    <div v-html="$sanitize(content)"></div>
+    <client-only>
+      <editor v-model="content" />
+      <div v-html="$sanitize(content)"></div>
+    </client-only>
   </div>
 </template>
 
