@@ -1,5 +1,13 @@
 <template>
-  <editor-content :editor="editor" />
+  <div>
+    <button 
+      :class="{ 'is-active': editor.isActive('bold') }"
+      @click="editor.chain().focus().toggleBold().run()"
+    >
+      Bold
+    </button>
+    <editor-content :editor="editor" />
+  </div>
 </template>
 
 <script>
@@ -31,7 +39,7 @@ export default {
       this.editor.commands.setContent(value, false)
     },
   },
-  mounted() {
+  beforeMount() {
     this.editor = new Editor({
       extensions: [
         StarterKit,
