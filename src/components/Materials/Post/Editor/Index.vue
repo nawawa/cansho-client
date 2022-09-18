@@ -1,23 +1,5 @@
 <template>
   <div>
-    <button 
-      :class="{ 'is-active': editor.isActive('bold') }"
-      @click="editor.chain().focus().toggleBold().run()"
-    >
-      Bold
-    </button>
-    <button 
-      :class="{ 'is-active': editor.isActive('italic') }"
-      @click="editor.chain().focus().toggleItalic().run()"
-    >
-      Italic
-    </button>
-    <button 
-      :class="{ 'is-active': editor.isActive('underline') }"
-      @click="editor.chain().focus().toggleUnderline().run()"
-    >
-      UnderLine
-    </button>
     <editor-content :editor="editor" />
   </div>
 </template>
@@ -26,6 +8,8 @@
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
+import HighLight from '@tiptap/extension-highlight'
+import TextAlign from '@tiptap/extension-text-align'
 
 export default {
   components: {
@@ -56,7 +40,9 @@ export default {
     this.editor = new Editor({
       extensions: [
         StarterKit,
-        Underline
+        Underline,
+        HighLight,
+        TextAlign
       ],
       content: this.modelValue,
       onUpdate: () => {
