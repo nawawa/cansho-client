@@ -32,4 +32,8 @@ export default {
     outline-style: none;
     caret-color: white;
   }
+  textarea::placeholder {
+    color: white;
+    opacity: 0.5;
+  }
 </style>
