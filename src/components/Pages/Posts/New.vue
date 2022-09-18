@@ -4,7 +4,6 @@
     <client-only>
       <textarea contenteditable="true" placeholder="記事タイトル" v-model="title"></textarea>
       <editor v-model="content" />
-      <div v-html="$sanitize(content)"></div>
     </client-only>
   </div>
 </template>
