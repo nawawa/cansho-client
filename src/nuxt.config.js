@@ -1,5 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
+const siteColor = `#5B6BA2`
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -12,7 +14,8 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
+      { name: "theme-color", content: siteColor }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -113,7 +116,7 @@ export default {
   // GoogleFont読み込み
   webfontloader: {
     google: {
-      families: ['Oswald:400'] 
+      families: ['Oswald:400', 'Noto Sans JP:300'] 
     }
   },
 
@@ -128,7 +131,7 @@ export default {
       },
       themes: {
         dark: {
-          main: '#6D7BAA'
+          main: siteColor
         }
       }
     }
