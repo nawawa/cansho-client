@@ -16,3 +16,11 @@ body ::-webkit-scrollbar {  /* Chrome, Safari 対応 */
 h1, h2, h3, a, p, b, textarea {
   color: white;
 }
+
+/*
+tiptapエディタ
+*/
+
+.ProseMirror:focus-visible {
+  outline: none;
+}
