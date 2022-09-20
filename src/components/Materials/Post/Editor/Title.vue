@@ -1,10 +1,11 @@
 <template>
   <textarea 
     id="post-title"
+    ref="textarea"
+    :style="styles"
     contenteditable="true" 
     placeholder="記事タイトル" 
     v-model="titleValue"
-    wrap="off"
     @keydown.enter.prevent="cancel"
     @compositionstart="composing=true"
     @compositionend="composing=false"
@@ -15,6 +16,7 @@
 export default {
   data: () => ({
     composing: false,
+    textareaHeight: '50px'
   }),
   model: {
     prop: "title",
@@ -31,6 +33,9 @@ export default {
       set(inputValue) {
         this.$emit("input", inputValue);
       },
+    },
+    styles() {
+      return { "height": this.textareaHeight}
     }
   },
   methods: {
@@ -42,7 +47,21 @@ export default {
         textarea.blur()
         this.$emit('enter')
       }
+    },
+    resize(){
+      this.textareaHeight = "auto"
+      this.$nextTick(()=>{
+        this.textareaHeight = `${this.$refs.textarea.scrollHeight}px`
+      })
     }
+  },
+  watch: {
+    title() {
+      this.resize()
+    }
+  },
+  mounted() {
+    this.resize()
   }
 }
 </script>
@@ -50,8 +69,9 @@ export default {
 <style lang="scss" scoped>
   #post-title {
     width: 100%;
-    height: 50px;
+    min-height: 1em;
     font-size: 32px;
+    font-weight: bold;
     line-height: 1.5;
     resize: none;
     outline-style: none;
@@ -59,6 +79,8 @@ export default {
     white-space: pre-wrap;
     word-wrap: break-word;
     letter-spacing: 0.04em;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
   }
   #post-title::placeholder {
     color: white;
