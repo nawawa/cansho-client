@@ -70,6 +70,7 @@ export default {
   #post-title {
     width: 100%;
     min-height: 1em;
+    margin: 32px 0 12px;
     font-size: 32px;
     font-weight: bold;
     line-height: 1.5;

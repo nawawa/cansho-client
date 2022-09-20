@@ -1,6 +1,6 @@
 <template>
   <div>
-    <editor-content :editor="editor" />
+    <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
 
