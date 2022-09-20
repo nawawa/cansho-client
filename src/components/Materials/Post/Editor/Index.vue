@@ -10,6 +10,7 @@ import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import HighLight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
+import Placeholder from '@tiptap/extension-placeholder'
 
 export default {
   components: {
@@ -23,7 +24,10 @@ export default {
   },
   emits: ['update:modelValue'],
   data: () => ({
-    editor: null
+    editor: null,
+    placeholders: [
+      'ようこそ。ご自由にお書きください。'
+    ]
   }),
   watch: {
     modelValue(value) {
@@ -42,7 +46,10 @@ export default {
         StarterKit,
         Underline,
         HighLight,
-        TextAlign
+        TextAlign,
+        Placeholder.configure({
+          placeholder: this.placeholders[0] // 配列からランダムに取得する
+        }),
       ],
       content: this.modelValue,
       onUpdate: () => {
