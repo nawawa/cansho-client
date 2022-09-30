@@ -38,6 +38,7 @@ export default {
       }
 
       this.editor.commands.setContent(value, false)
+      this.addClickEventToContents()
     },
   },
   beforeMount() {
@@ -54,11 +55,30 @@ export default {
       content: this.modelValue,
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
+        this.addClickEventToContents()
       },
     })
   },
   beforeDestroy() {
     this.editor.destroy()
   },
+  methods: {
+    /**
+     * エディタに入力されたコンテンツにクリックイベントを付与する
+     */
+    addClickEventToContents() {
+      const pElements = document.querySelectorAll('p, h1, h2, h3')
+      const pElementsArray = [...pElements]
+
+      pElementsArray.forEach(p => {
+        p.onclick  = () => {
+          this.displayEditMenuButton(p)
+        }
+      })
+    },
+    displayEditMenuButton(pElement) {
+      console.log(pElement.innerText)
+    }
+  }
 }
 </script>
