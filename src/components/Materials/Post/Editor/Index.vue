@@ -1,10 +1,17 @@
 <template>
   <div>
-    <editor-content class="pt-9" :editor="editor" />
+    <edit-button-container />
+    <div class="mx-10">
+      <title-column v-model="title" @enter="focusOnEditor" />
+      <editor-content class="pt-9" :editor="editor" />
+    </div>
   </div>
 </template>
 
 <script>
+import TitleColumn from '~/components/Materials/Post/Editor/Title.vue'
+import EditButton from '~/components/Materials/Post/Editor/Button.vue'
+import EditButtonContainer from '~/components/Materials/Post/Editor/ButtonContainer.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -15,6 +22,9 @@ import Placeholder from '@tiptap/extension-placeholder'
 export default {
   components: {
     EditorContent,
+    TitleColumn,
+    EditButton,
+    EditButtonContainer
   },
   props: {
     modelValue: {
@@ -25,6 +35,7 @@ export default {
   emits: ['update:modelValue'],
   data: () => ({
     editor: null,
+    title: '',
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ]
@@ -64,7 +75,7 @@ export default {
   },
   methods: {
     /**
-     * エディタに入力されたコンテンツにクリックイベントを付与する
+     * エディタに入力されたコンテンツ（DOM要素）にクリックイベントを付与する
      */
     addClickEventToContents() {
       const pElements = document.querySelectorAll('p, h1, h2, h3')
@@ -78,6 +89,14 @@ export default {
     },
     displayEditMenuButton(pElement) {
       console.log(pElement.innerText)
+    },
+
+    /**
+     * タイトル欄でエンターしたらエディタへフォーカスを移動する
+     */
+    focusOnEditor() {
+      const editor = document.getElementsByClassName('ProseMirror')[0]
+      editor.focus()
     }
   }
 }
