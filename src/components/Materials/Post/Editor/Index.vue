@@ -115,26 +115,30 @@ export default {
      * 選択したテキストの上部にツールバーを表示する
      */
     toggleToolbar() {
-      this.editorElement.addEventListener('mousedown', this.selectCheck, false)
-      this.editorElement.addEventListener('mouseup', this.displayToolbarIfSelected, false)
+      window.addEventListener('mousedown', this.selectCheck, false)
+      window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
     },
-    selectCheck() {
+    selectCheck(e) {
       /**
        * https://benborgers.com/posts/tiptap-selection より引用
        */
+      const clickCount = e.detail
+
       const selection = this.editor.view.state.selection
       const currentSelectionIsEmpty = selection.empty
 
       if (currentSelectionIsEmpty) {
         /**
          * マウスダウン時、選択中のテキストが存在しない
+         * ツールバーを表示させる
          */
         this.isToolbarDisplayable = true
       } else {
         /**
          * マウスダウン時、選択中のテキストが存在する
+         * ツールバーを表示させない
          */
-        this.isToolbarDisplayable = false
+        this.isToolbarDisplayable = (clickCount === 3) ? true: false
       }
     },
     displayToolbarIfSelected() {
@@ -154,8 +158,8 @@ export default {
     this.editor.destroy()
   },
   destroyed() {
-    this.editorElement.removeEventListener('mouseup', this.selectCheck, false)
-    this.editorElement.removeEventListener('mousedown', this.displayToolbarIfSelected, false)
+    window.removeEventListener('mouseup', this.selectCheck, false)
+    window.removeEventListener('mousedown', this.displayToolbarIfSelected, false)
     window.removeEventListener('DOMContentLoaded', this.getEditorElement, false)
   }
 }
