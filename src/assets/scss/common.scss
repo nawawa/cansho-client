@@ -16,24 +16,3 @@ body ::-webkit-scrollbar {  /* Chrome, Safari 対応 */
 h1, h2, h3, a, p, b, textarea {
   color: white;
 }
-
-/*
-tiptapエディタ
-*/
-
-.ProseMirror:focus-visible {
-  outline: none;
-}
-
-.ProseMirror p {
-  margin-bottom: 32px !important;
-  font-size: 18px;
-}
-
-.ProseMirror p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  float: left;
-  color: #adb5bd;
-  pointer-events: none;
-  height: 0;
-}
