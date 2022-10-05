@@ -1,7 +1,32 @@
 <template>
   <div>
-    <edit-button-container />
-    <div class="mx-10">
+    <toolbar :styleAttribute="`opacity: 1; top: 161px; left: 127px`">
+    <!-- <toolbar :styleAttribute="toggleToolbar()"> -->
+      <MaterialsPostEditorButton 
+        :buttonType="`bold`"
+        :editor="editor"
+        @click="editor.chain().focus().toggleBold().run()"
+      >
+        mdi-format-bold
+      </MaterialsPostEditorButton>
+
+      <MaterialsPostEditorButton 
+        :buttonType="`italic`"
+        :editor="editor"
+        @click="editor.chain().focus().toggleItalic().run()"
+      >
+        mdi-format-italic
+      </MaterialsPostEditorButton>
+
+      <MaterialsPostEditorButton 
+        :buttonType="`underline`"
+        :editor="editor"
+        @click="editor.chain().focus().toggleUnderline().run()"
+      >
+        mdi-format-underline
+      </MaterialsPostEditorButton>
+    </toolbar>
+    <div class="post-width">
       <title-column v-model="title" @enter="focusOnEditor" />
       <editor-content class="pt-9" :editor="editor" />
     </div>
@@ -11,7 +36,7 @@
 <script>
 import TitleColumn from '~/components/Materials/Post/Editor/Title.vue'
 import EditButton from '~/components/Materials/Post/Editor/Button.vue'
-import EditButtonContainer from '~/components/Materials/Post/Editor/ButtonContainer.vue'
+import Toolbar from '~/components/Materials/Post/Editor/Toolbar.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -24,7 +49,7 @@ export default {
     EditorContent,
     TitleColumn,
     EditButton,
-    EditButtonContainer
+    Toolbar
   },
   props: {
     modelValue: {
@@ -35,10 +60,12 @@ export default {
   emits: ['update:modelValue'],
   data: () => ({
     editor: null,
-    title: '',
+    editorElement: null,
+    title: null,
     placeholders: [
       'ようこそ。ご自由にお書きください。'
-    ]
+    ],
+    isToolbarDisplayable: true
   }),
   watch: {
     modelValue(value) {
@@ -49,7 +76,6 @@ export default {
       }
 
       this.editor.commands.setContent(value, false)
-      this.addClickEventToContents()
     },
   },
   beforeMount() {
@@ -66,38 +92,71 @@ export default {
       content: this.modelValue,
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
-        this.addClickEventToContents()
+      },
+      onSelectionUpdate: () => {
+        this.toggleToolbar()
       },
     })
   },
-  beforeDestroy() {
-    this.editor.destroy()
+  mounted() {
+    window.addEventListener('DOMContentLoaded', this.getEditorElement, false)
   },
   methods: {
-    /**
-     * エディタに入力されたコンテンツ（DOM要素）にクリックイベントを付与する
-     */
-    addClickEventToContents() {
-      const pElements = document.querySelectorAll('p, h1, h2, h3')
-      const pElementsArray = [...pElements]
-
-      pElementsArray.forEach(p => {
-        p.onclick  = () => {
-          this.displayEditMenuButton(p)
-        }
-      })
+    getEditorElement() {
+      this.editorElement = document.getElementsByClassName('ProseMirror')[0]
     },
-    displayEditMenuButton(pElement) {
-      console.log(pElement.innerText)
-    },
-
     /**
      * タイトル欄でエンターしたらエディタへフォーカスを移動する
      */
     focusOnEditor() {
-      const editor = document.getElementsByClassName('ProseMirror')[0]
-      editor.focus()
+      this.editorElement.focus()
+    },
+    /**
+     * 選択したテキストの上部にツールバーを表示する
+     */
+    toggleToolbar() {
+      this.editorElement.addEventListener('mousedown', this.selectCheck, false)
+      this.editorElement.addEventListener('mouseup', this.displayToolbarIfSelected, false)
+    },
+    selectCheck() {
+      /**
+       * https://benborgers.com/posts/tiptap-selection より引用
+       */
+      const selection = this.editor.view.state.selection
+      const currentSelectionIsEmpty = selection.empty
+
+      if (currentSelectionIsEmpty) {
+        /**
+         * マウスダウン時、選択中のテキストが存在しない
+         */
+        this.isToolbarDisplayable = true
+      } else {
+        /**
+         * マウスダウン時、選択中のテキストが存在する
+         */
+        this.isToolbarDisplayable = false
+      }
+    },
+    displayToolbarIfSelected() {
+      if (this.isToolbarDisplayable) {
+        console.log('ツールバー表示')
+      } else {
+        console.log('ツールバー非表示')
+      }
     }
+  },
+  computed: {
+    style() {
+      return `opacity:1`
+    }
+  },
+  beforeDestroy() {
+    this.editor.destroy()
+  },
+  destroyed() {
+    this.editorElement.removeEventListener('mouseup', this.selectCheck, false)
+    this.editorElement.removeEventListener('mousedown', this.displayToolbarIfSelected, false)
+    window.removeEventListener('DOMContentLoaded', this.getEditorElement, false)
   }
 }
 </script>
