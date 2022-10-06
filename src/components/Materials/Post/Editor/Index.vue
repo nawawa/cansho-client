@@ -1,7 +1,6 @@
 <template>
   <div>
-    <toolbar :styleAttribute="`opacity: 1; top: 161px; left: 127px`">
-    <!-- <toolbar :styleAttribute="toggleToolbar()"> -->
+    <toolbar :styleAttribute="toolbarStyle">
       <MaterialsPostEditorButton 
         :buttonType="`bold`"
         :editor="editor"
@@ -65,7 +64,8 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    isToolbarDisplayable: true
+    isToolbarDisplayable: true,
+    toolbarStyle: ''
   }),
   watch: {
     modelValue(value) {
@@ -121,9 +121,8 @@ export default {
     selectCheck(e) {
       /**
        * https://benborgers.com/posts/tiptap-selection より引用
+       * マウスダウン時、選択状態のテキストノードが空白かの真偽値を取得
        */
-      const clickCount = e.detail
-
       const selection = this.editor.view.state.selection
       const currentSelectionIsEmpty = selection.empty
 
@@ -136,22 +135,25 @@ export default {
       } else {
         /**
          * マウスダウン時、選択中のテキストが存在する
-         * ツールバーを表示させない
+         * 通常のクリックならツールバーを表示させない
+         *    トリプルクリックで選択された場合は表示する
          */
-        this.isToolbarDisplayable = (clickCount === 3) ? true: false
+        this.isToolbarDisplayable = (e.detail === 3) ? true: false
       }
     },
-    displayToolbarIfSelected() {
+    displayToolbarIfSelected(e) {
       if (this.isToolbarDisplayable) {
         console.log('ツールバー表示')
+        const {left, top} = e.target.getBoundingClientRect()
+        console.log(left, top)
+        /**
+         * ここ、ツールバー自信の縦幅と横幅を取得して、その値を使って計算
+         */
+        this.toolbarStyle = `opacity:1; left: ${left}px; top:${top - 130}px;`
       } else {
         console.log('ツールバー非表示')
+        this.toolbarStyle = `opacity:0;`
       }
-    }
-  },
-  computed: {
-    style() {
-      return `opacity:1`
     }
   },
   beforeDestroy() {
