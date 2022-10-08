@@ -25,15 +25,11 @@
         mdi-format-underline
       </MaterialsPostEditorButton>
     </toolbar>
-    <div class="post-width">
-      <title-column v-model="title" @enter="focusOnEditor" />
-      <editor-content class="pt-9" :editor="editor" />
-    </div>
+    <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
 
 <script>
-import TitleColumn from '~/components/Materials/Post/Editor/Title.vue'
 import EditButton from '~/components/Materials/Post/Editor/Button.vue'
 import Toolbar from '~/components/Materials/Post/Editor/Toolbar.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
@@ -46,7 +42,6 @@ import Placeholder from '@tiptap/extension-placeholder'
 export default {
   components: {
     EditorContent,
-    TitleColumn,
     EditButton,
     Toolbar
   },
@@ -59,12 +54,10 @@ export default {
   emits: ['update:modelValue'],
   data: () => ({
     editor: null,
-    editorElement: null,
     title: null,
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    isToolbarDisplayable: true,
     toolbarStyle: ''
   }),
   watch: {
@@ -98,27 +91,33 @@ export default {
       },
     })
   },
-  mounted() {
-    window.addEventListener('DOMContentLoaded', this.getEditorElement, false)
-  },
   methods: {
-    getEditorElement() {
-      this.editorElement = document.getElementsByClassName('ProseMirror')[0]
-    },
-    /**
-     * タイトル欄でエンターしたらエディタへフォーカスを移動する
-     */
-    focusOnEditor() {
-      this.editorElement.focus()
-    },
     /**
      * 選択したテキストの上部にツールバーを表示する
      */
     toggleToolbar() {
-      window.addEventListener('mousedown', this.selectCheck, false)
-      window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
+      window.addEventListener('mousedown', this.checkSelectionState, false)
     },
-    selectCheck(e) {
+    /**
+     * マウスダウン時点で、Selectionオブジェクトがテキストを所持していたらツールバーを表示させない
+     */
+    checkSelectionState(e) {
+      /**
+       * https://benborgers.com/posts/tiptap-selection より引用
+       */
+      const selection = this.editor.view.state.selection
+
+      if (selection.content().content.size === 0) {
+        window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
+      } else {
+        window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+        this.hideToolbar()
+      }
+    },
+    /**
+     * マウスアップ時点でSelectionオブジェクトがテキストを所持していればツールバーを表示させない
+     */
+    displayToolbarIfSelected(e) {
       /**
        * https://benborgers.com/posts/tiptap-selection より引用
        * マウスダウン時、選択状態のテキストノードが空白かの真偽値を取得
@@ -126,43 +125,29 @@ export default {
       const selection = this.editor.view.state.selection
       const currentSelectionIsEmpty = selection.empty
 
+      // e.target がpから外れてしまうのでツールバーの表示位置が変になる
+      const clientRect = e.target.getBoundingClientRect()
+
       if (currentSelectionIsEmpty) {
-        /**
-         * マウスダウン時、選択中のテキストが存在しない
-         * ツールバーを表示させる
-         */
-        this.isToolbarDisplayable = true
+        return (e.detail === 3) ? this.displayToolbar(clientRect): this.hideToolbar()
       } else {
-        /**
-         * マウスダウン時、選択中のテキストが存在する
-         * 通常のクリックならツールバーを表示させない
-         *    トリプルクリックで選択された場合は表示する
-         */
-        this.isToolbarDisplayable = (e.detail === 3) ? true: false
+        return this.displayToolbar(clientRect)
       }
     },
-    displayToolbarIfSelected(e) {
-      if (this.isToolbarDisplayable) {
-        console.log('ツールバー表示')
-        const {left, top} = e.target.getBoundingClientRect()
-        console.log(left, top)
-        /**
-         * ここ、ツールバー自信の縦幅と横幅を取得して、その値を使って計算
-         */
-        this.toolbarStyle = `opacity:1; left: ${left}px; top:${top - 130}px;`
-      } else {
-        console.log('ツールバー非表示')
-        this.toolbarStyle = `opacity:0;`
-      }
+    displayToolbar({left, top}) {
+      console.log(left, top)
+      this.toolbarStyle = `opacity:1; left: ${left}px; top:${top}px;`
+    },
+    hideToolbar() {
+      this.toolbarStyle = `opacity:0;`
     }
   },
   beforeDestroy() {
     this.editor.destroy()
   },
   destroyed() {
-    window.removeEventListener('mouseup', this.selectCheck, false)
-    window.removeEventListener('mousedown', this.displayToolbarIfSelected, false)
-    window.removeEventListener('DOMContentLoaded', this.getEditorElement, false)
+    window.removeEventListener('mousedown', this.test, false)
+    window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
   }
 }
 </script>
