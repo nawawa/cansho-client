@@ -102,41 +102,55 @@ export default {
      * マウスダウン時点で、Selectionオブジェクトがテキストを所持していたらツールバーを表示させない
      */
     checkSelectionState(e) {
-      /**
-       * https://benborgers.com/posts/tiptap-selection より引用
-       */
-      const selection = this.editor.view.state.selection
+      
+      const targetElement = e.target.tagName
 
-      if (selection.content().content.size === 0) {
-        window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
-      } else {
-        window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+      /**
+       * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
+       */
+      if (
+        ['P', 'EM', 'STRONG', 'H1', 'H2', 'H3'].includes(targetElement)) {
+        return window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
+      } else  {
         this.hideToolbar()
+        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
     },
     /**
      * マウスアップ時点でSelectionオブジェクトがテキストを所持していればツールバーを表示させない
      */
     displayToolbarIfSelected(e) {
+
+      if(this.isToolbarDisplayed()) {
+        this.hideToolbar()
+        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+      }
+
       /**
        * https://benborgers.com/posts/tiptap-selection より引用
-       * マウスダウン時、選択状態のテキストノードが空白かの真偽値を取得
+       * 選択状態のテキストノードが空白かの真偽値を取得
        */
       const selection = this.editor.view.state.selection
       const currentSelectionIsEmpty = selection.empty
 
-      // e.target がpから外れてしまうのでツールバーの表示位置が変になる
-      const clientRect = e.target.getBoundingClientRect()
+      // window オブジェクトにイベントをつけてるので ツールバーさえクリックできない問題を解決する
 
-      if (currentSelectionIsEmpty) {
+      /**
+       * 選択された要素の座標を取得
+       */
+      const clientRect = window.getSelection().anchorNode.parentElement.getBoundingClientRect()
+      if (currentSelectionIsEmpty === true) {
         return (e.detail === 3) ? this.displayToolbar(clientRect): this.hideToolbar()
-      } else {
+      } else if(currentSelectionIsEmpty === false) {
         return this.displayToolbar(clientRect)
       }
     },
+    isToolbarDisplayed() {
+      const toolbar = document.getElementById('toolbar-div')
+      return toolbar.style.opacity === '1'
+    },
     displayToolbar({left, top}) {
-      console.log(left, top)
-      this.toolbarStyle = `opacity:1; left: ${left}px; top:${top}px;`
+      this.toolbarStyle = `opacity:1; left: ${left}px; top:${top}px; display: block; z-index: 1000;`
     },
     hideToolbar() {
       this.toolbarStyle = `opacity:0;`
@@ -146,7 +160,7 @@ export default {
     this.editor.destroy()
   },
   destroyed() {
-    window.removeEventListener('mousedown', this.test, false)
+    window.removeEventListener('mousedown', this.checkSelectionState, false)
     window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
   }
 }
