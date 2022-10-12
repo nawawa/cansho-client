@@ -113,7 +113,7 @@ export default {
        * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
        */
       if (
-        ['P', 'EM', 'STRONG', 'H1', 'H2', 'H3'].includes(targetElement.tagName)) {
+        ['P', 'EM', 'STRONG', 'U', 'H1', 'H2', 'H3'].includes(targetElement.tagName)) {
         return window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
       } else  {
         this.hideToolbar()
