@@ -16,6 +16,7 @@ export default {
   #toolbar-div {
     position: absolute;
     opacity: 0;
+    display: none;
     border: solid white 1px;
   }
 </style>
