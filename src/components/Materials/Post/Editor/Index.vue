@@ -103,18 +103,28 @@ export default {
      */
     checkSelectionState(e) {
       
-      const targetElement = e.target.tagName
+      const targetElement = e.target
 
+      if (this.isEditorButton(targetElement)) {
+        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+      }
+      
       /**
        * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
        */
       if (
-        ['P', 'EM', 'STRONG', 'H1', 'H2', 'H3'].includes(targetElement)) {
+        ['P', 'EM', 'STRONG', 'H1', 'H2', 'H3'].includes(targetElement.tagName)) {
         return window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
       } else  {
         this.hideToolbar()
         return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
+    },
+    /**
+     * マウスダウンイベントのターゲットがツールバー自体かどうかをクラス名で判定
+     */
+    isEditorButton(targetElement) {
+      return targetElement.classList.contains('toolbar-button')
     },
     /**
      * マウスアップ時点でSelectionオブジェクトがテキストを所持していればツールバーを表示させない
@@ -132,8 +142,6 @@ export default {
        */
       const selection = this.editor.view.state.selection
       const currentSelectionIsEmpty = selection.empty
-
-      // window オブジェクトにイベントをつけてるので ツールバーさえクリックできない問題を解決する
 
       /**
        * 選択された要素の座標を取得
@@ -154,7 +162,7 @@ export default {
     },
     hideToolbar() {
       this.toolbarStyle = `opacity:0;`
-    }
+    },
   },
   beforeDestroy() {
     this.editor.destroy()

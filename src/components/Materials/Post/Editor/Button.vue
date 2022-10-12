@@ -6,7 +6,7 @@
     tile
     icon
   >
-    <v-icon>
+    <v-icon class="toolbar-button">
       <slot />
     </v-icon>
   </v-btn>
