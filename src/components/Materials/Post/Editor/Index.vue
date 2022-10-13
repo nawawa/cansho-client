@@ -102,6 +102,10 @@ export default {
      * マウスダウン時点で、Selectionオブジェクトがテキストを所持していたらツールバーを表示させない
      */
     checkSelectionState(e) {
+
+      if (this.isToolbarDisplayed()) {
+        return this.hideToolbar()
+      }
       
       const targetElement = e.target
 
@@ -131,11 +135,6 @@ export default {
      */
     displayToolbarIfSelected(e) {
 
-      if(this.isToolbarDisplayed()) {
-        this.hideToolbar()
-        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
-      }
-
       /**
        * https://benborgers.com/posts/tiptap-selection より引用
        * 選択状態のテキストノードが空白かの真偽値を取得
@@ -147,6 +146,7 @@ export default {
        * 選択された要素の座標を取得
        */
       const clientRect = window.getSelection().anchorNode.parentElement.getBoundingClientRect()
+      
       if (currentSelectionIsEmpty === true) {
         return (e.detail === 3) ? this.displayToolbar(clientRect): this.hideToolbar()
       } else if(currentSelectionIsEmpty === false) {
