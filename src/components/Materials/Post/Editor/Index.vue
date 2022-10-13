@@ -103,7 +103,14 @@ export default {
      */
     checkSelectionState(e) {
 
-      if (this.isToolbarDisplayed()) {
+      const currentSelectionIsEmpty = this.currentSelectionIsEmpty()
+
+      const isToolbarDisplayed = this.isToolbarDisplayed()
+      if (isToolbarDisplayed === true && currentSelectionIsEmpty === false) {
+        this.hideToolbar()
+        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+      }
+      if (isToolbarDisplayed) {
         return this.hideToolbar()
       }
       
@@ -139,8 +146,7 @@ export default {
        * https://benborgers.com/posts/tiptap-selection より引用
        * 選択状態のテキストノードが空白かの真偽値を取得
        */
-      const selection = this.editor.view.state.selection
-      const currentSelectionIsEmpty = selection.empty
+      const currentSelectionIsEmpty = this.currentSelectionIsEmpty()
 
       /**
        * 選択された要素の座標を取得
@@ -156,6 +162,9 @@ export default {
     isToolbarDisplayed() {
       const toolbar = document.getElementById('toolbar-div')
       return toolbar.style.opacity === '1'
+    },
+    currentSelectionIsEmpty() {
+      return this.editor.view.state.selection.empty
     },
     displayToolbar({left, top}) {
       this.toolbarStyle = `opacity:1; left: ${left}px; top:${top}px; display: block; z-index: 1000;`
