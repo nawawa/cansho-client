@@ -103,30 +103,39 @@ export default {
      */
     checkSelectionState(e) {
 
-      const currentSelectionIsEmpty = this.currentSelectionIsEmpty()
-
-      const isToolbarDisplayed = this.isToolbarDisplayed()
-      if (isToolbarDisplayed === true && currentSelectionIsEmpty === false) {
-        this.hideToolbar()
-        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
-      }
-      if (isToolbarDisplayed) {
-        return this.hideToolbar()
-      }
-      
       const targetElement = e.target
-
+   
       if (this.isEditorButton(targetElement)) {
         return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
+
+      const isToolbarDisplayed = this.isToolbarDisplayed()
+
+      if (
+        targetElement === window.getSelection().anchorNode.parentElement &&
+        isToolbarDisplayed === true
+      ) {
+        this.hideToolbar()
+        return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+      }
+
+
+      if (isToolbarDisplayed === true) {
+        this.hideToolbar()
+        window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
+      }
+
+      const isToolbarHided = (this.toolbarStyle === '') || (this.toolbarStyle === `opacity:0;`)
       
       /**
        * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
        */
       if (
-        ['P', 'EM', 'STRONG', 'U', 'H1', 'H2', 'H3'].includes(targetElement.tagName)) {
+        ['P', 'EM', 'STRONG', 'U', 'H1', 'H2', 'H3'].includes(targetElement.tagName) &&
+        isToolbarHided === true
+      ) {
         return window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
-      } else  {
+      } else {
         this.hideToolbar()
         return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
@@ -141,7 +150,6 @@ export default {
      * マウスアップ時点でSelectionオブジェクトがテキストを所持していればツールバーを表示させない
      */
     displayToolbarIfSelected(e) {
-
       /**
        * https://benborgers.com/posts/tiptap-selection より引用
        * 選択状態のテキストノードが空白かの真偽値を取得
@@ -160,8 +168,7 @@ export default {
       }
     },
     isToolbarDisplayed() {
-      const toolbar = document.getElementById('toolbar-div')
-      return toolbar.style.opacity === '1'
+      return document.getElementById('toolbar-div').style.opacity === '1'
     },
     currentSelectionIsEmpty() {
       return this.editor.view.state.selection.empty
