@@ -58,7 +58,7 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    toolbarStyle: ''
+    toolbarStyle: '',
   }),
   watch: {
     modelValue(value) {
@@ -159,12 +159,18 @@ export default {
       /**
        * 選択された要素の座標を取得
        */
-      const clientRect = window.getSelection().anchorNode.parentElement.getBoundingClientRect()
+      const selection = window.getSelection()
+      // const clientRect = selection.anchorNode.parentElement.getBoundingClientRect()
+
+      // left + フォントの横幅 * anchorOffset
+      // commonAncestorContainer.length 
+      const domRect = selection.getRangeAt(0).getClientRects()[0]
+      console.log(domRect)
       
       if (currentSelectionIsEmpty === true) {
-        return (e.detail === 3) ? this.displayToolbar(clientRect): this.hideToolbar()
+        return (e.detail === 3) ? this.displayToolbar(domRect): this.hideToolbar()
       } else if(currentSelectionIsEmpty === false) {
-        return this.displayToolbar(clientRect)
+        return this.displayToolbar(domRect)
       }
     },
     isToolbarDisplayed() {
@@ -173,8 +179,10 @@ export default {
     currentSelectionIsEmpty() {
       return this.editor.view.state.selection.empty
     },
-    displayToolbar({left, top}) {
-      this.toolbarStyle = `opacity:1; left: ${left}px; top:${top}px; display: block; z-index: 1000;`
+    displayToolbar({left, top, width, height}) {
+      const halfSelectionLength = Math.floor(width) / 2 - 59
+
+      this.toolbarStyle = `opacity:1; left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 62)}px; display: block; z-index: 1000;`
     },
     hideToolbar() {
       this.toolbarStyle = `opacity:0;`
