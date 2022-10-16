@@ -1,6 +1,9 @@
 <template>
   <div>
-    <toolbar :styleAttribute="toolbarStyle">
+    <toolbar 
+      :styleAttribute="toolbarStyle"
+      :classAttribute="toolbarClassAttribute"
+    >
       <MaterialsPostEditorButton 
         :buttonType="`bold`"
         :editor="editor"
@@ -59,6 +62,7 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbarStyle: '',
+    toolbarClassAttribute: 'hide'
   }),
   watch: {
     modelValue(value) {
@@ -125,7 +129,7 @@ export default {
         window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
 
-      const isToolbarHided = (this.toolbarStyle === '') || (this.toolbarStyle === `opacity:0;`)
+      const isToolbarHided = this.toolbarClassAttribute === `hide`
       
       /**
        * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
@@ -160,12 +164,7 @@ export default {
        * 選択された要素の座標を取得
        */
       const selection = window.getSelection()
-      // const clientRect = selection.anchorNode.parentElement.getBoundingClientRect()
-
-      // left + フォントの横幅 * anchorOffset
-      // commonAncestorContainer.length 
       const domRect = selection.getRangeAt(0).getClientRects()[0]
-      console.log(domRect)
       
       if (currentSelectionIsEmpty === true) {
         return (e.detail === 3) ? this.displayToolbar(domRect): this.hideToolbar()
@@ -174,18 +173,19 @@ export default {
       }
     },
     isToolbarDisplayed() {
-      return document.getElementById('toolbar-div').style.opacity === '1'
+      return this.toolbarClassAttribute === `display`
     },
     currentSelectionIsEmpty() {
       return this.editor.view.state.selection.empty
     },
     displayToolbar({left, top, width, height}) {
       const halfSelectionLength = Math.floor(width) / 2 - 59
-
-      this.toolbarStyle = `opacity:1; left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 62)}px; display: block; z-index: 1000;`
+      
+      this.toolbarStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; display: block; z-index: 1000;`
+      this.toolbarClassAttribute = `display`
     },
     hideToolbar() {
-      this.toolbarStyle = `opacity:0;`
+      this.toolbarClassAttribute = `hide`
     },
   },
   beforeDestroy() {
