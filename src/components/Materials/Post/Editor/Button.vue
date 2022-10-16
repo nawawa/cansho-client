@@ -1,12 +1,13 @@
 <template>
   <v-btn 
-    class="my-3"
     :class="{ 'is-active': editor.isActive(buttonType) }"
     @click="$emit('click')"
     tile
     icon
   >
-    <v-icon class="toolbar-button">
+    <v-icon 
+      class="toolbar-button"
+    >
       <slot />
     </v-icon>
   </v-btn>
