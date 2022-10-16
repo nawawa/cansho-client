@@ -1,7 +1,7 @@
 <template>
   <div>
     <toolbar 
-      :styleAttribute="toolbarStyle"
+      :styleAttribute="toolbarPositionStyle"
       :classAttribute="toolbarClassAttribute"
     >
       <MaterialsPostEditorButton 
@@ -61,7 +61,7 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    toolbarStyle: '',
+    toolbarPositionStyle: '',
     toolbarClassAttribute: 'hide'
   }),
   watch: {
@@ -181,7 +181,7 @@ export default {
     displayToolbar({left, top, width, height}) {
       const halfSelectionLength = Math.floor(width) / 2 - 59
       
-      this.toolbarStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; display: block; z-index: 1000;`
+      this.toolbarPositionStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; display: block; z-index: 1000;`
       this.toolbarClassAttribute = `display`
     },
     hideToolbar() {
