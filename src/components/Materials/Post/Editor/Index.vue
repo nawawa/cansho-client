@@ -3,6 +3,7 @@
     <toolbar 
       :styleAttribute="toolbarPositionStyle"
       :classAttribute="toolbarClassAttribute"
+      ref="toolbar"
     >
       <MaterialsPostEditorButton 
         :buttonType="`bold`"
@@ -62,7 +63,8 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbarPositionStyle: '',
-    toolbarClassAttribute: 'hide'
+    toolbarClassAttribute: 'hide',
+    toolbarWidth: 0,
   }),
   watch: {
     modelValue(value) {
@@ -123,7 +125,6 @@ export default {
         return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
 
-
       if (isToolbarDisplayed === true) {
         this.hideToolbar()
         window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
@@ -179,10 +180,18 @@ export default {
       return this.editor.view.state.selection.empty
     },
     displayToolbar({left, top, width, height}) {
-      const halfSelectionLength = Math.floor(width) / 2 - 59
+      /**
+       * 選択範囲の横幅 / 2 - ツールバーの横幅 / 2 で選択範囲とツールバーの中心を合わせる
+       */
+      this.$refs.toolbar.$el.style.display = 'block'
+      if (this.toolbarWidth === 0) {
+        console.log(this.$refs.toolbar.$el.clientWidth)
+        this.toolbarWidth = this.$refs.toolbar.$el.clientWidth
+      }
+      const halfSelectionLength = (Math.floor(width) / 2) - (this.toolbarWidth / 2)
       
-      this.toolbarPositionStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; display: block; z-index: 1000;`
       this.toolbarClassAttribute = `display`
+      this.toolbarPositionStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; z-index: 1000;`
     },
     hideToolbar() {
       this.toolbarClassAttribute = `hide`
@@ -192,6 +201,7 @@ export default {
     this.editor.destroy()
   },
   destroyed() {
+    window.removeEventListener('DOMContentLoaded', this.getToolbarWidth, false)
     window.removeEventListener('mousedown', this.checkSelectionState, false)
     window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
   }
