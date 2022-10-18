@@ -3,7 +3,6 @@
     :class="buttonClass"
     tile
     icon
-    color="white"
     @click="$emit('click')"
   >
     <v-icon 
