@@ -21,7 +21,7 @@
         :editor="editor"
         @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
       >
-        mdi-format-header={{ headingLevel }}
+        mdi-format-header-{{ headingLevel }}
       </MaterialsPostEditorButton>
     </toolbar>
     <editor-content class="pt-9" :editor="editor" />
@@ -206,7 +206,7 @@ export default {
     },
     displayToolbar({left, top, width, height}) {
       /**
-       * 選択範囲の横幅 / 2 - ツールバーの横幅 / 2 で選択範囲とツールバーの中心を合わせる
+       * 選択範囲の横幅の半分 - ツールバーの横幅の半分 で選択範囲とツールバーの中心を合わせる
        */
       this.$refs.toolbar.$el.style.display = 'block'
       if (this.toolbar.width === 0) {
