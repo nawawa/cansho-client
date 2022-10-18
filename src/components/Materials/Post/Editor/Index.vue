@@ -1,32 +1,27 @@
 <template>
   <div>
     <toolbar 
-      :styleAttribute="toolbarPositionStyle"
-      :classAttribute="toolbarClassAttribute"
+      :styleAttribute="toolbar.positionStyle"
+      :classAttribute="toolbar.classAttribute"
       ref="toolbar"
     >
       <MaterialsPostEditorButton 
-        :buttonType="`bold`"
+        v-for="button in toolbar.buttons" :key="button.index"
+        :buttonClass="{ 'is-active': editor.isActive(button.type) }"
+        :buttonType="button.type"
         :editor="editor"
-        @click="editor.chain().focus().toggleBold().run()"
+        @click="markContent(button.type)"
       >
-        mdi-format-bold
+        mdi-format-{{ button.type }}
       </MaterialsPostEditorButton>
 
       <MaterialsPostEditorButton 
-        :buttonType="`italic`"
+        v-for="headingLevel in [1,2,3]" :key="headingLevel.index"
+        :buttonType="[`heading`, { level: headingLevel }]"
         :editor="editor"
-        @click="editor.chain().focus().toggleItalic().run()"
+        @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
       >
-        mdi-format-italic
-      </MaterialsPostEditorButton>
-
-      <MaterialsPostEditorButton 
-        :buttonType="`underline`"
-        :editor="editor"
-        @click="editor.chain().focus().toggleUnderline().run()"
-      >
-        mdi-format-underline
+        mdi-format-header={{ headingLevel }}
       </MaterialsPostEditorButton>
     </toolbar>
     <editor-content class="pt-9" :editor="editor" />
@@ -62,9 +57,7 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    toolbarPositionStyle: '',
-    toolbarClassAttribute: 'hide',
-    toolbarWidth: 0,
+    toolbar: null
   }),
   watch: {
     modelValue(value) {
@@ -96,8 +89,40 @@ export default {
         this.toggleToolbar()
       },
     })
+
+    this.toolbar = {
+      positionStyle: '',
+      classAttribute: 'hide',
+      width: 0,
+      buttons: [
+        {
+          type: 'bold',
+        },
+        {
+          type: 'italic',
+        },
+        {
+          type: 'underline',
+        },
+      ]
+    }
   },
   methods: {
+    markContent(type) {
+      switch (type) {
+        case 'bold': 
+          this.editor.chain().focus().toggleBold().run()
+          break
+        case 'italic': 
+          this.editor.chain().focus().toggleItalic().run()
+          break
+        case 'underline': 
+          this.editor.chain().focus().toggleUnderline().run()
+          break
+        default:
+          return
+      }
+    },
     /**
      * 選択したテキストの上部にツールバーを表示する
      */
@@ -130,7 +155,7 @@ export default {
         window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
 
-      const isToolbarHided = this.toolbarClassAttribute === `hide`
+      const isToolbarHided = this.toolbar.classAttribute === `hide`
       
       /**
        * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
@@ -174,7 +199,7 @@ export default {
       }
     },
     isToolbarDisplayed() {
-      return this.toolbarClassAttribute === `display`
+      return this.toolbar.classAttribute === `display`
     },
     currentSelectionIsEmpty() {
       return this.editor.view.state.selection.empty
@@ -184,17 +209,16 @@ export default {
        * 選択範囲の横幅 / 2 - ツールバーの横幅 / 2 で選択範囲とツールバーの中心を合わせる
        */
       this.$refs.toolbar.$el.style.display = 'block'
-      if (this.toolbarWidth === 0) {
-        console.log(this.$refs.toolbar.$el.clientWidth)
-        this.toolbarWidth = this.$refs.toolbar.$el.clientWidth
+      if (this.toolbar.width === 0) {
+        this.toolbar.width = this.$refs.toolbar.$el.clientWidth
       }
-      const halfSelectionLength = (Math.floor(width) / 2) - (this.toolbarWidth / 2)
+      const halfSelectionLength = (Math.floor(width) / 2) - (this.toolbar.width / 2)
       
-      this.toolbarClassAttribute = `display`
-      this.toolbarPositionStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; z-index: 1000;`
+      this.toolbar.classAttribute = `display`
+      this.toolbar.positionStyle = `left: ${left + halfSelectionLength}px; top:${top - (height * 3 + 40)}px; display:block; z-index: 1000;`
     },
     hideToolbar() {
-      this.toolbarClassAttribute = `hide`
+      this.toolbar.classAttribute = `hide`
     },
   },
   beforeDestroy() {

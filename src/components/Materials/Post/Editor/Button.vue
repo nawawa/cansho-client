@@ -1,9 +1,10 @@
 <template>
   <v-btn 
-    :class="{ 'is-active': editor.isActive(buttonType) }"
-    @click="$emit('click')"
+    :class="buttonClass"
     tile
     icon
+    color="white"
+    @click="$emit('click')"
   >
     <v-icon 
       class="toolbar-button"
@@ -16,8 +17,7 @@
 <script>
 export default {
   props: {
-    buttonType: String,
-    editor: Object
+    buttonClass: Object
   }
 }
 </script>
