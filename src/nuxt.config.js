@@ -1,5 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
+const siteColor = `#5B6BA2`
+
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
@@ -12,7 +14,8 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
+      { name: "theme-color", content: siteColor }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -21,10 +24,13 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    { src: '~/assets/scss/common.scss' },
+    { src: '~/assets/scss/post.scss' },
   ],
   
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '@/plugins/sanitize-html'
   ],
   
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -104,13 +110,14 @@ export default {
   modules: [
     'nuxt-webfontloader',
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    'sanitize-html'
   ],
 
   // GoogleFont読み込み
   webfontloader: {
     google: {
-      families: ['Oswald:400'] 
+      families: ['Oswald:400', 'Noto Sans JP:300'] 
     }
   },
 
@@ -125,7 +132,7 @@ export default {
       },
       themes: {
         dark: {
-          main: '#6D7BAA'
+          main: siteColor
         }
       }
     }

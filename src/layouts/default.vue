@@ -1,9 +1,14 @@
 <template>
-  <v-app>
+  <v-app 
+    dark
+    :style="color"
+  >
     
     <v-app-bar
       fixed
       app
+      flat
+      :style="color"
     >
       
       <v-spacer />
@@ -39,6 +44,9 @@ export default {
     },
     isLoginPage() {
       return this.$route.name === 'login'
+    },
+    color() {
+      return `background: ${this.$vuetify.theme.themes.dark.main}`
     }
   },
   methods: {
