@@ -135,16 +135,18 @@ export default {
     checkSelectionState(e) {
 
       const targetElement = e.target
+      const isTargetIsContent = ['P', 'EM', 'STRONG', 'U', 'H1', 'H2', 'H3'].includes(targetElement.tagName)
+      const allSelect = e.detail === 3
+      const isToolbarDisplayed = this.isToolbarDisplayed()
    
       if (this.isEditorButton(targetElement)) {
         return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
 
-      const isToolbarDisplayed = this.isToolbarDisplayed()
-
       if (
-        targetElement === window.getSelection().anchorNode.parentElement &&
-        isToolbarDisplayed === true
+        targetElement === window.getSelection().anchorNode.parentElement && // マウスダウンのイベントターゲットが選択されている要素と同一であること
+        isToolbarDisplayed === true && 
+        allSelect === false
       ) {
         this.hideToolbar()
         return window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
@@ -155,14 +157,12 @@ export default {
         window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
       }
 
-      const isToolbarHided = this.toolbar.classAttribute === `hide`
-      
       /**
        * ターゲットがエディタ内コンテンツだったらツールバーを表示するかどうか判断する
        */
       if (
-        ['P', 'EM', 'STRONG', 'U', 'H1', 'H2', 'H3'].includes(targetElement.tagName) &&
-        isToolbarHided === true
+        (isTargetIsContent && isToolbarDisplayed === false) ||
+        (isTargetIsContent && allSelect === true)
       ) {
         return window.addEventListener('mouseup', this.displayToolbarIfSelected, false)
       } else {
@@ -191,7 +191,7 @@ export default {
        */
       const selection = window.getSelection()
       const domRect = selection.getRangeAt(0).getClientRects()[0]
-      
+
       if (currentSelectionIsEmpty === true) {
         return (e.detail === 3) ? this.displayToolbar(domRect): this.hideToolbar()
       } else if(currentSelectionIsEmpty === false) {
