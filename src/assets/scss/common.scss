@@ -1,0 +1,18 @@
+/*
+共通スタイル
+*/
+
+body {
+  background: var(--v-main-base);
+  color: var(--v-font-base);
+  scrollbar-width: none;
+  overflow: hidden;
+}
+
+body ::-webkit-scrollbar {  /* Chrome, Safari 対応 */
+  display:none;
+}
+
+h1, h2, h3, a, p, b, textarea {
+  color: white;
+}
