@@ -58,5 +58,6 @@ export default {
         transform: translateY(10px);
       }
     }
+    pointer-events: none;
   }
 </style>
