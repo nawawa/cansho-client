@@ -1,5 +1,6 @@
 <template>
   <div>
+    <menu-button :rectY="menuButton.rectY" />
     <toolbar 
       :styleAttribute="toolbar.positionStyle"
       :classAttribute="toolbar.classAttribute"
@@ -29,6 +30,7 @@
 </template>
 
 <script>
+import MenuButton from '~/components/Materials/Post/Editor/MenuButton.vue'
 import EditButton from '~/components/Materials/Post/Editor/Button.vue'
 import Toolbar from '~/components/Materials/Post/Editor/Toolbar.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
@@ -41,6 +43,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 export default {
   components: {
     EditorContent,
+    MenuButton,
     EditButton,
     Toolbar
   },
@@ -57,7 +60,8 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    toolbar: null
+    toolbar: null,
+    menuButton: null
   }),
   watch: {
     modelValue(value) {
@@ -80,13 +84,18 @@ export default {
         Placeholder.configure({
           placeholder: this.placeholders[0] // 配列からランダムに取得する
         }),
+        Image
       ],
       content: this.modelValue,
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
       },
       onSelectionUpdate: () => {
-        this.toggleToolbar()
+        this.toggleToolbar(),
+        this.moveMenuBarButtonToCursorRow()
+      },
+      onFocus() {
+        // 一番上の段落へメニューボタン配置
       },
     })
 
@@ -105,9 +114,20 @@ export default {
           type: 'underline',
         },
       ]
+    },
+
+    this.menuButton = {
+      rectY: 0
     }
   },
   methods: {
+    moveMenuBarButtonToCursorRow() {
+      const selection = window.getSelection()
+      if (selection.rangeCount !== 0) {
+        const {y} = window.getSelection().getRangeAt(0).getBoundingClientRect()
+        this.menuButton.rectY = y
+      }
+    },
     markContent(type) {
       switch (type) {
         case 'bold': 
@@ -225,7 +245,6 @@ export default {
     this.editor.destroy()
   },
   destroyed() {
-    window.removeEventListener('DOMContentLoaded', this.getToolbarWidth, false)
     window.removeEventListener('mousedown', this.checkSelectionState, false)
     window.removeEventListener('mouseup', this.displayToolbarIfSelected, false)
   }
