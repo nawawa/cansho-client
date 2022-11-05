@@ -1,6 +1,6 @@
 <template>
   <div>
-    <menu-button :rectY="menuButton.rectY" />
+    <menu-button :rectY="menuButton.rectY" :rectX="60" />
     <toolbar 
       :styleAttribute="toolbar.positionStyle"
       :classAttribute="toolbar.classAttribute"
@@ -34,6 +34,7 @@ import MenuButton from '~/components/Materials/Post/Editor/MenuButton.vue'
 import EditButton from '~/components/Materials/Post/Editor/Button.vue'
 import Toolbar from '~/components/Materials/Post/Editor/Toolbar.vue'
 import { Editor, EditorContent } from '@tiptap/vue-2'
+import Heading from '@tiptap/extension-heading'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
 import HighLight from '@tiptap/extension-highlight'
@@ -84,6 +85,9 @@ export default {
         Placeholder.configure({
           placeholder: this.placeholders[0] // 配列からランダムに取得する
         }),
+        Heading.configure({
+          levels: [1, 2, 3],
+        }),
         Image
       ],
       content: this.modelValue,
@@ -124,10 +128,33 @@ export default {
     moveMenuBarButtonToCursorRow() {
       const selection = window.getSelection()
       if (selection.rangeCount !== 0) {
-        const {y} = window.getSelection().getRangeAt(0).getBoundingClientRect()
-        this.menuButton.rectY = y
+
+        const {y, height} = window.getSelection().getRangeAt(0).getBoundingClientRect()
+        const targetElementStyles = window.getComputedStyle(selection.focusNode.parentElement)
+        const fontSize = Number(targetElementStyles.getPropertyValue('font-size').replace('px', ''))
+
+        const rectY = (elementName, headerElementHeight) => {
+          switch (elementName) {
+            case 'P':
+            case 'U':
+            case 'I':
+            case 'EM':
+            case 'STRONG':
+              return y - headerElementHeight - (height / 2)
+            case 'H1':
+              return y - headerElementHeight - 1.5
+            case 'H2':
+              return y - headerElementHeight - (fontSize / 3)
+            case 'H3':
+              return y - headerElementHeight - (height / 2) + 1.5
+            default: 
+              return y
+          }
+        }
+        this.menuButton.rectY = rectY(selection.focusNode.parentElement.tagName, 56)
       }
     },
+    
     markContent(type) {
       switch (type) {
         case 'bold': 
