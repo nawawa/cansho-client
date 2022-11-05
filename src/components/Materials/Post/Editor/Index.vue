@@ -133,28 +133,44 @@ export default {
         const targetElementStyles = window.getComputedStyle(selection.focusNode.parentElement)
         const fontSize = Number(targetElementStyles.getPropertyValue('font-size').replace('px', ''))
 
-        const rectY = (elementName, headerElementHeight) => {
-          switch (elementName) {
-            case 'P':
-            case 'U':
-            case 'I':
-            case 'EM':
-            case 'STRONG':
-              return y - headerElementHeight - (height / 2)
-            case 'H1':
-              return y - headerElementHeight - 1.5
-            case 'H2':
-              return y - headerElementHeight - (fontSize / 3)
-            case 'H3':
-              return y - headerElementHeight - (height / 2) + 1.5
-            default: 
-              return y
-          }
-        }
-        this.menuButton.rectY = rectY(selection.focusNode.parentElement.tagName, 56)
+        this.menuButton.rectY = this.calculateMenuButtonRectY({
+          elementTagName: selection.focusNode.parentElement.tagName, 
+          selectionRectY: y, 
+          headerElementHeight: 56, 
+          selectionHeight: height, 
+          targetFontSize: fontSize
+        })
       }
     },
-    
+    /**
+     * メニューボタンを表示する縦の座標を計算する
+     * 
+     * @param {String} elementTagName カーソル位置の行のHTML要素名
+     * @param {Number} selectionRectY Selectionオブジェクトの縦位置
+     * @param {Number} headerElementHeight ヘッダー(v-app-bar)の縦幅
+     * @param {Number} selectionHeight Selectionオブジェクトの縦幅
+     * @param {Number} targetFontSize カーソル位置の本文のフォントサイズ
+     * 
+     * @return {Number} メニューボタンの top プロパティに指定する数値 
+     */
+    calculateMenuButtonRectY({elementTagName, selectionRectY, headerElementHeight, selectionHeight, targetFontSize}) {
+      switch (elementTagName) {
+        case 'P':
+        case 'U':
+        case 'I':
+        case 'EM':
+        case 'STRONG':
+          return selectionRectY - headerElementHeight - (selectionHeight / 2)
+        case 'H1':
+          return selectionRectY - headerElementHeight - 1.5
+        case 'H2':
+          return selectionRectY - headerElementHeight - (targetFontSize / 3)
+        case 'H3':
+          return selectionRectY - headerElementHeight - (selectionHeight / 2) + 1.5
+        default: 
+          return selectionRectY
+      }
+    },
     markContent(type) {
       switch (type) {
         case 'bold': 
