@@ -1,6 +1,6 @@
 <template>
   <div>
-    <menu-button :rectY="menuButton.rectY" :rectX="60" />
+    <menu-button :rectY="menuButton.rectY" />
     <toolbar 
       :styleAttribute="toolbar.positionStyle"
       :classAttribute="toolbar.classAttribute"
@@ -127,19 +127,26 @@ export default {
   methods: {
     moveMenuBarButtonToCursorRow() {
       const selection = window.getSelection()
-      if (selection.rangeCount !== 0) {
+      if (selection.rangeCount === 0) {
+        return 
+      }
 
-        const {y, height} = window.getSelection().getRangeAt(0).getBoundingClientRect()
-        const targetElementStyles = window.getComputedStyle(selection.focusNode.parentElement)
-        const fontSize = Number(targetElementStyles.getPropertyValue('font-size').replace('px', ''))
-
-        this.menuButton.rectY = this.calculateMenuButtonRectY({
-          elementTagName: selection.focusNode.parentElement.tagName, 
-          selectionRectY: y, 
-          headerElementHeight: 56, 
-          selectionHeight: height, 
-          targetFontSize: fontSize
-        })
+      const {y, height} = window.getSelection().getRangeAt(0).getBoundingClientRect()
+      const targetElementStyles = window.getComputedStyle(selection.focusNode.parentElement)
+      const headerElementStyles = window.getComputedStyle(document.getElementsByClassName('v-app-bar')[0])
+      const fontSize = Number(targetElementStyles.getPropertyValue('font-size').replace('px', ''))
+      const headerHeight = Number(headerElementStyles.getPropertyValue('height').replace('px', ''))
+      
+      const rectY = this.calculateMenuButtonRectY({
+        elementTagName: selection.focusNode.parentElement.tagName, 
+        selectionRectY: y, 
+        headerElementHeight: headerHeight, 
+        selectionHeight: height, 
+        targetFontSize: fontSize
+      })
+      
+      if (this.menuButton.rectY !== rectY) {
+        this.menuButton.rectY = rectY
       }
     },
     /**
