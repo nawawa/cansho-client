@@ -157,7 +157,6 @@ export default {
       switch (elementTagName) {
         case 'P':
         case 'U':
-        case 'I':
         case 'EM':
         case 'STRONG':
           return selectionRectY - headerElementHeight - (selectionHeight / 2)
