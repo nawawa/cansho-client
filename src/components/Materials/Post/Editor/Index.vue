@@ -1,6 +1,5 @@
 <template>
   <div>
-    <menu-button :rectY="menuButton.rectY" :defaultRectY="menuButton.defaultRectY" />
     <toolbar 
       :styleAttribute="toolbar.positionStyle"
       :classAttribute="toolbar.classAttribute"
@@ -25,15 +24,17 @@
         mdi-format-header-{{ headingLevel }}
       </MaterialsPostEditorButton>
     </toolbar>
+    <floating-menu :editor="editor" v-if="editor" :should-show="() => true">
+      <p>メニューやで</p>
+    </floating-menu>
     <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
 
 <script>
-import MenuButton from '~/components/Materials/Post/Editor/MenuButton.vue'
 import EditButton from '~/components/Materials/Post/Editor/Button.vue'
 import Toolbar from '~/components/Materials/Post/Editor/Toolbar.vue'
-import { Editor, EditorContent } from '@tiptap/vue-2'
+import { Editor, EditorContent, FloatingMenu } from '@tiptap/vue-2'
 import Heading from '@tiptap/extension-heading'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -43,8 +44,8 @@ import Placeholder from '@tiptap/extension-placeholder'
 
 export default {
   components: {
+    FloatingMenu,
     EditorContent,
-    MenuButton,
     EditButton,
     Toolbar
   },
@@ -62,10 +63,6 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbar: null,
-    menuButton: {
-      rectY: 0,
-      defaultRectY: 188.496
-    }
   }),
   watch: {
     modelValue(value) {
@@ -98,8 +95,7 @@ export default {
         this.$emit('input', this.editor.getHTML())
       },
       onSelectionUpdate: () => {
-        this.toggleToolbar(),
-        this.moveMenuBarButtonToCursorRow()
+        this.toggleToolbar()
       },
     })
 
@@ -121,65 +117,6 @@ export default {
     }
   },
   methods: {
-    moveMenuBarButtonToCursorRow() {
-      // 新しい行が追加されたときにどうにかそこにメニューボタンを配置したいねんけど
-      // 対象が is-empty の場合にも動くように調整する
-      const selection = window.getSelection()
-
-      if (selection.rangeCount === 0) {
-        return
-      }
-
-      const {y, height} = selection.getRangeAt(0).getBoundingClientRect()
-      console.log(y, height)
-
-      const targetElementStyles = window.getComputedStyle(selection.focusNode.parentElement)
-      const headerElementStyles = window.getComputedStyle(document.getElementsByClassName('v-app-bar')[0])
-      const fontSize = Number(targetElementStyles.getPropertyValue('font-size').replace('px', ''))
-      const headerHeight = Number(headerElementStyles.getPropertyValue('height').replace('px', ''))
-      
-      const rectY = this.calculateMenuButtonRectY({
-        elementTagName: selection.focusNode.parentElement.tagName, 
-        selectionRectY: y, 
-        headerElementHeight: headerHeight, 
-        selectionHeight: height, 
-        targetFontSize: fontSize
-      })
-      
-      if (this.menuButton.rectY !== rectY) {
-        return this.menuButton.rectY = rectY
-      }
-
-      return this.menuButton.rectY = this.menuButton.rectY
-    },
-    /**
-     * メニューボタンを表示する縦の座標を計算する
-     * 
-     * @param {String} elementTagName カーソル位置の行のHTML要素名
-     * @param {Number} selectionRectY Selectionオブジェクトの縦位置
-     * @param {Number} headerElementHeight ヘッダー(v-app-bar)の縦幅
-     * @param {Number} selectionHeight Selectionオブジェクトの縦幅
-     * @param {Number} targetFontSize カーソル位置の本文のフォントサイズ
-     * 
-     * @return {Number} メニューボタンの top プロパティに指定する数値 
-     */
-    calculateMenuButtonRectY({elementTagName, selectionRectY, headerElementHeight, selectionHeight, targetFontSize}) {
-      switch (elementTagName) {
-        case 'P':
-        case 'U':
-        case 'EM':
-        case 'STRONG':
-          return (selectionRectY - headerElementHeight - (selectionHeight / 2)) * 1.008
-        case 'H1':
-          return selectionRectY - headerElementHeight - 1.5
-        case 'H2':
-          return (selectionRectY - headerElementHeight - (targetFontSize / 3)) * 1.008
-        case 'H3':
-          return selectionRectY - headerElementHeight - (selectionHeight / 2) + 1.5
-        default: 
-          return selectionRectY
-      }
-    },
     markContent(type) {
       switch (type) {
         case 'bold': 
