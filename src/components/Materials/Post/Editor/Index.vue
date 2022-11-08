@@ -1,6 +1,6 @@
 <template>
   <div>
-    <menu-button :rectY="menuButton.rectY" />
+    <menu-button :rectY="menuButton.rectY" :defaultRectY="menuButton.defaultRectY" />
     <toolbar 
       :styleAttribute="toolbar.positionStyle"
       :classAttribute="toolbar.classAttribute"
@@ -62,7 +62,10 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbar: null,
-    menuButton: null
+    menuButton: {
+      rectY: 0,
+      defaultRectY: 188.496
+    }
   }),
   watch: {
     modelValue(value) {
@@ -98,9 +101,6 @@ export default {
         this.toggleToolbar(),
         this.moveMenuBarButtonToCursorRow()
       },
-      onFocus() {
-        // 一番上の段落へメニューボタン配置
-      },
     })
 
     this.toolbar = {
@@ -118,20 +118,21 @@ export default {
           type: 'underline',
         },
       ]
-    },
-
-    this.menuButton = {
-      rectY: 0
     }
   },
   methods: {
     moveMenuBarButtonToCursorRow() {
+      // 新しい行が追加されたときにどうにかそこにメニューボタンを配置したいねんけど
+      // 対象が is-empty の場合にも動くように調整する
       const selection = window.getSelection()
+
       if (selection.rangeCount === 0) {
-        return 
+        return
       }
 
-      const {y, height} = window.getSelection().getRangeAt(0).getBoundingClientRect()
+      const {y, height} = selection.getRangeAt(0).getBoundingClientRect()
+      console.log(y, height)
+
       const targetElementStyles = window.getComputedStyle(selection.focusNode.parentElement)
       const headerElementStyles = window.getComputedStyle(document.getElementsByClassName('v-app-bar')[0])
       const fontSize = Number(targetElementStyles.getPropertyValue('font-size').replace('px', ''))
@@ -146,8 +147,10 @@ export default {
       })
       
       if (this.menuButton.rectY !== rectY) {
-        this.menuButton.rectY = rectY
+        return this.menuButton.rectY = rectY
       }
+
+      return this.menuButton.rectY = this.menuButton.rectY
     },
     /**
      * メニューボタンを表示する縦の座標を計算する
@@ -166,11 +169,11 @@ export default {
         case 'U':
         case 'EM':
         case 'STRONG':
-          return selectionRectY - headerElementHeight - (selectionHeight / 2)
+          return (selectionRectY - headerElementHeight - (selectionHeight / 2)) * 1.008
         case 'H1':
           return selectionRectY - headerElementHeight - 1.5
         case 'H2':
-          return selectionRectY - headerElementHeight - (targetFontSize / 3)
+          return (selectionRectY - headerElementHeight - (targetFontSize / 3)) * 1.008
         case 'H3':
           return selectionRectY - headerElementHeight - (selectionHeight / 2) + 1.5
         default: 
