@@ -29,18 +29,20 @@
       </bubble-menu-content-container>
     </bubble-menu>
     <!-- Selection と selection.getRangeAt(0).getClientRect() で、Node分左にずらせばいいのかな？ -->
-    <!-- <floating-menu 
+    <floating-menu 
       :editor="editor" 
       v-if="editor" 
       :should-show="() => true"
       :tippy-options="{
+        placement: 'top-start'
       }"
     >
       <menu-button 
+        ref="menuButton"
         :width="menuButton.widthAndHeight"
         :height="menuButton.widthAndHeight"
       />
-    </floating-menu> -->
+    </floating-menu>
 
     <editor-content class="pt-9" :editor="editor" />
   </div>
@@ -119,6 +121,7 @@ export default {
         this.$emit('input', this.editor.getHTML())
       },
       onSelectionUpdate: () => {
+        this.getMenuButtonRect
       },
     })
 
@@ -147,6 +150,10 @@ export default {
     //     left: 40,
     //   }
     // },
+    getMenuButtonRect() {
+      const menuButton = this.$refs.menuButton
+      console.log(menuButton.getClientRect())
+    },
     markContent(type) {
       switch (type) {
         case 'bold': 
