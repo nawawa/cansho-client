@@ -8,7 +8,7 @@
       v-if="editor"
     >
       <bubble-menu-content-container>
-        <MaterialsPostEditorButton 
+        <bubble-menu-content-button 
           v-for="button in toolbar.buttons" :key="button.index"
           :buttonClass="{ 'is-active': editor.isActive(button.type) }"
           :buttonType="button.type"
@@ -16,16 +16,16 @@
           @click="markContent(button.type)"
         >
           mdi-format-{{ button.type }}
-        </MaterialsPostEditorButton>
+        </bubble-menu-content-button>
 
-        <MaterialsPostEditorButton 
+        <bubble-menu-content-button  
           v-for="headingLevel in [1,2,3]" :key="headingLevel.index"
           :buttonType="[`heading`, { level: headingLevel }]"
           :editor="editor"
           @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
         >
           mdi-format-header-{{ headingLevel }}
-        </MaterialsPostEditorButton>
+        </bubble-menu-content-button>
       </bubble-menu-content-container>
     </bubble-menu>
     <!-- Selection と selection.getRangeAt(0).getClientRect() で、Node分左にずらせばいいのかな？ -->
@@ -49,9 +49,9 @@
 <script>
 import MenuButton from '~/components/Materials/Post/Editor/MenuButton/Index.vue'
 import MenuButtonContainer from '~/components/Materials/Post/Editor/MenuButton/Container.vue'
-import EditButton from '~/components/Materials/Post/Editor/Button.vue'
 import { Editor, EditorContent, FloatingMenu, BubbleMenu } from '@tiptap/vue-2'
-import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenuContentContainer.vue'
+import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
+import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
 import Heading from '@tiptap/extension-heading'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -65,8 +65,8 @@ export default {
     MenuButtonContainer,
     FloatingMenu,
     EditorContent,
-    EditButton,
     BubbleMenu,
+    BubbleMenuContentButton,
     BubbleMenuContentContainer
   },
   props: {
