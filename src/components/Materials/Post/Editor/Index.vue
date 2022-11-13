@@ -28,7 +28,7 @@
         </bubble-menu-content-button>
       </bubble-menu-content-container>
     </bubble-menu>
-    <!-- Selection と selection.getRangeAt(0).getClientRect() で、Node分左にずらせばいいのかな？ -->
+
     <floating-menu 
       :editor="editor" 
       v-if="editor" 
