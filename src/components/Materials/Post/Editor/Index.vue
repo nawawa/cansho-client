@@ -34,7 +34,7 @@
       v-if="editor" 
       :should-show="() => true"
       :tippy-options="{
-        placement: 'top-start'
+        getReferenceClientRect: getMenuButtonRect
       }"
     >
       <menu-button 
@@ -43,15 +43,13 @@
         :height="menuButton.widthAndHeight"
       />
     </floating-menu>
-
     <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
 
 <script>
 import MenuButton from '~/components/Materials/Post/Editor/MenuButton/Index.vue'
-import MenuButtonContainer from '~/components/Materials/Post/Editor/MenuButton/Container.vue'
-import { Editor, EditorContent, FloatingMenu, BubbleMenu } from '@tiptap/vue-2'
+import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
 import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
 import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
 import Heading from '@tiptap/extension-heading'
@@ -64,7 +62,6 @@ import Placeholder from '@tiptap/extension-placeholder'
 export default {
   components: {
     MenuButton,
-    MenuButtonContainer,
     FloatingMenu,
     EditorContent,
     BubbleMenu,
@@ -121,7 +118,6 @@ export default {
         this.$emit('input', this.editor.getHTML())
       },
       onSelectionUpdate: () => {
-        this.getMenuButtonRect
       },
     })
 
@@ -141,18 +137,30 @@ export default {
   },
   methods: {
     /**
-     * メニューボタンの表示位置を計算する
+     * Selection の座標からメニューボタンの表示位置を計算する
      */
-    // calculateMenuButtonPosition() {
-    //   return {
-    //     width: this.menuButton.widthAndHeight,
-    //     top: 100,
-    //     left: 40,
-    //   }
-    // },
+    calculateMenuButtonPosition({top, height}) {
+      const halfButtonSize = this.menuButton.widthAndHeight / 2
+      const halfHeight = height / 2
+
+      return {
+        width: this.menuButton.widthAndHeight,
+        height: 0,
+        left: 0,
+        right: 200,
+        top: top - halfButtonSize + halfHeight,
+      }
+    },
+    /**
+     * Selection の座標を取得する
+     */
     getMenuButtonRect() {
-      const menuButton = this.$refs.menuButton
-      console.log(menuButton.getClientRect())
+      const editorView = this.editor.view
+      const { ranges } = editorView.state.selection
+      const from = Math.min(...ranges.map(range => range.$from.pos))
+      const to = Math.max(...ranges.map(range => range.$to.pos))
+
+      return this.calculateMenuButtonPosition(posToDOMRect(editorView, from, to))
     },
     markContent(type) {
       switch (type) {
