@@ -40,15 +40,18 @@
       <menu-button 
         :width="menuButton.widthAndHeight"
         :height="menuButton.widthAndHeight"
+        @toggleMenuList="menuButton.isAvailable = !menuButton.isAvailable"
       />
+      <menu-list v-if="menuButton.isAvailable" />
     </floating-menu>
-    
+
     <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
 
 <script>
 import MenuButton from '~/components/Materials/Post/Editor/Menu/Button.vue'
+import MenuList from '~/components/Materials/Post/Editor/Menu/List.vue'
 import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
 import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
 import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
@@ -62,6 +65,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 export default {
   components: {
     MenuButton,
+    MenuList,
     FloatingMenu,
     EditorContent,
     BubbleMenu,
@@ -85,6 +89,7 @@ export default {
     menuButton: {
       widthAndHeight: 40,
       left: 0,
+      isAvailable: false
     }
   }),
   watch: {
