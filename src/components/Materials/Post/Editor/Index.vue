@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import MenuButton from '~/components/Materials/Post/Editor/MenuButton/Index.vue'
+import MenuButton from '~/components/Materials/Post/Editor/Menu/Button.vue'
 import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
 import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
 import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
