@@ -40,7 +40,7 @@
       <menu-button 
         :width="menuButton.widthAndHeight"
         :height="menuButton.widthAndHeight"
-        @toggleMenuList="menuButton.isAvailable = !menuButton.isAvailable"
+        @toggleMenuList="toggleMenuList"
       />
       <menu-list v-if="menuButton.isAvailable" />
     </floating-menu>
@@ -173,6 +173,9 @@ export default {
         right: 200,
         top: top - halfButtonSize + halfHeight,
       }
+    },
+    toggleMenuList() {
+      this.menuButton.isAvailable = !this.menuButton.isAvailable
     },
     markContent(type) {
       switch (type) {
