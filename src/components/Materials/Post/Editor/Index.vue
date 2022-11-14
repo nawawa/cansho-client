@@ -38,7 +38,6 @@
       }"
     >
       <menu-button 
-        ref="menuButton"
         :width="menuButton.widthAndHeight"
         :height="menuButton.widthAndHeight"
       />
