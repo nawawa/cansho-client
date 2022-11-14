@@ -43,6 +43,7 @@
         :height="menuButton.widthAndHeight"
       />
     </floating-menu>
+    
     <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
@@ -84,6 +85,7 @@ export default {
     toolbar: null,
     menuButton: {
       widthAndHeight: 40,
+      left: 0,
     }
   }),
   watch: {
@@ -117,8 +119,6 @@ export default {
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
       },
-      onSelectionUpdate: () => {
-      },
     })
 
     this.toolbar = {
@@ -135,21 +135,14 @@ export default {
       ]
     }
   },
+  mounted() {
+    window.addEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
+  },
   methods: {
-    /**
-     * Selection の座標からメニューボタンの表示位置を計算する
-     */
-    calculateMenuButtonPosition({top, height}) {
-      const halfButtonSize = this.menuButton.widthAndHeight / 2
-      const halfHeight = height / 2
-
-      return {
-        width: this.menuButton.widthAndHeight,
-        height: 0,
-        left: 0,
-        right: 200,
-        top: top - halfButtonSize + halfHeight,
-      }
+    setMenuButtonLeft() {
+      const emptyP = document.getElementsByClassName('is-empty')[0]
+      const pRectLeft = emptyP.getBoundingClientRect().left
+      this.menuButton.left = pRectLeft - (this.menuButton.widthAndHeight * 3)
     },
     /**
      * Selection の座標を取得する
@@ -161,6 +154,21 @@ export default {
       const to = Math.max(...ranges.map(range => range.$to.pos))
 
       return this.calculateMenuButtonPosition(posToDOMRect(editorView, from, to))
+    },
+    /**
+     * Selection の座標からメニューボタンの表示位置を計算する
+     */
+    calculateMenuButtonPosition({top, height}) {
+      const halfButtonSize = this.menuButton.widthAndHeight / 2
+      const halfHeight = height / 2
+
+      return {
+        width: this.menuButton.widthAndHeight,
+        height: 0,
+        left: this.menuButton.left,
+        right: 200,
+        top: top - halfButtonSize + halfHeight,
+      }
     },
     markContent(type) {
       switch (type) {
@@ -181,5 +189,8 @@ export default {
   beforeDestroy() {
     this.editor.destroy()
   },
+  destroyed() {
+    window.removeEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
+  }
 }
 </script>
