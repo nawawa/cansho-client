@@ -38,11 +38,16 @@
       }"
     >
       <menu-button 
-        :width="menuButton.widthAndHeight"
-        :height="menuButton.widthAndHeight"
+        id="menu-button"
+        :width="menu.button.widthAndHeight"
+        :height="menu.button.widthAndHeight"
         @toggleMenuList="toggleMenuList"
       />
-      <menu-list v-if="menuButton.isAvailable" />
+      <menu-list 
+        v-if="menu.button.isAvailable" 
+        @display="menu.list.isDisplayed = true"
+        @hide="menu.list.isDisplayed = false"
+      />
     </floating-menu>
 
     <editor-content class="pt-9" :editor="editor" />
@@ -86,11 +91,16 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbar: null,
-    menuButton: {
-      widthAndHeight: 40,
-      left: 0,
-      isAvailable: false
-    }
+    menu: {
+      button: {
+        widthAndHeight: 40,
+        left: 0,
+        isAvailable: false,
+      },
+      list: { 
+        isDisplayed: false,
+      }
+    },
   }),
   watch: {
     modelValue(value) {
@@ -102,6 +112,13 @@ export default {
 
       this.editor.commands.setContent(value, false)
     },
+    'menu.list.isDisplayed': function(value) {
+      if (value === true) {
+        document.addEventListener('click', this.closeMenuListIfClickedButton, false)
+      } else {
+        document.removeEventListener('click', this.closeMenuListIfClickedButton, false)
+      }
+    }
   },
   beforeMount() {
     this.editor = new Editor({
@@ -146,7 +163,7 @@ export default {
     setMenuButtonLeft() {
       const emptyP = document.getElementsByClassName('is-empty')[0]
       const pRectLeft = emptyP.getBoundingClientRect().left
-      this.menuButton.left = pRectLeft - (this.menuButton.widthAndHeight * 3)
+      this.menu.button.left = pRectLeft - (this.menu.button.widthAndHeight * 3)
     },
     /**
      * Selection の座標を取得する
@@ -163,19 +180,26 @@ export default {
      * Selection の座標からメニューボタンの表示位置を計算する
      */
     calculateMenuButtonPosition({top, height}) {
-      const halfButtonSize = this.menuButton.widthAndHeight / 2
+      const halfButtonSize = this.menu.button.widthAndHeight / 2
       const halfHeight = height / 2
 
       return {
-        width: this.menuButton.widthAndHeight,
+        width: this.menu.button.widthAndHeight,
         height: 0,
-        left: this.menuButton.left,
+        left: this.menu.button.left,
         right: 200,
         top: top - halfButtonSize + halfHeight,
       }
     },
     toggleMenuList() {
-      this.menuButton.isAvailable = !this.menuButton.isAvailable
+      this.menu.button.isAvailable = !this.menu.button.isAvailable
+    },
+    closeMenuListIfClickedButton(e) {
+      if (e.target.closest('#menu-button') === null) {
+        return this.menu.button.isAvailable = false
+      } else {
+        return 
+      }
     },
     markContent(type) {
       switch (type) {
