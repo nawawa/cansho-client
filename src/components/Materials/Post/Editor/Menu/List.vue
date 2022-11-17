@@ -1,25 +1,27 @@
 <template>
   <div id="menu-list-wrapper">
     <h1>挿入</h1>
-    <v-row v-for="menu in menus" :key="menu.index" class="py-2">
-      <v-col cols="1" class="py-0">
+    <v-row v-for="menu in menus" :key="menu.index" class="pa-2 menu-list-item" align-content="center">
+      <v-col cols="2" class="pa-1">
         <v-icon>
           mdi-{{ menu.type }}
         </v-icon>
       </v-col>
-      <v-col class="py-0 pl-8">
+      <v-col class="py-1 pl-8">
         <p>{{ menu.name }}</p>
       </v-col>
     </v-row>
-    <v-row class="py-2">
-      <v-col cols="1" class="py-0">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="white" xmlns:xlink="http://www.w3.org/1999/xlink">
-          <path d="M18 6H6V9H4V4H20V9H18V6Z"></path>
-          <path d="M4 15H6V18H18V15H20V20H4V15Z"></path>
-          <path d="M2 11H22V13H2V11Z"></path>
-        </svg>
+    <v-row class="pa-2 menu-list-item" align-content="center">
+      <v-col cols="2" class="pa-1">
+        <i class="v-icon notranslate mdi theme--dark">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 12H24" stroke="white" stroke-width="4"/>
+            <path d="M0 20H19" stroke="white" stroke-width="2"/>
+            <path d="M0 4H15" stroke="white" stroke-width="2"/>
+          </svg>
+        </i>
       </v-col>
-      <v-col class="py-0 pl-8">
+      <v-col class="py-1 pl-8">
         <p>区切り線</p>
       </v-col>
     </v-row>
@@ -45,19 +47,25 @@ export default {
     border: 1px solid white;
     border-radius: 4px;
     margin-left: 50px;
-    padding: 10px;
+    padding: 12px;
     background: var(--v-main-base);
   }
 
+  .menu-list-item {
+    border-top: 1px solid white;
+  }
+
   h1 {
-    font-size: 14px !important;
-    padding-bottom: 12px;
+    height: 36px;
+    font-size: 12px !important;
+    line-height: 12px;
     font-weight: normal;
+    color: #b5bdda;
   }
 
   p {
     margin: 0;
-    padding-top: 2.3px;
+    padding-top: 2.5px;
     font-size: 14px !important;
   }
 </style>
