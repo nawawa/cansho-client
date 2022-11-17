@@ -28,28 +28,37 @@
         </bubble-menu-content-button>
       </bubble-menu-content-container>
     </bubble-menu>
-    <!-- Selection と selection.getRangeAt(0).getClientRect() で、Node分左にずらせばいいのかな？ -->
-    <!-- <floating-menu 
+
+    <floating-menu 
       :editor="editor" 
       v-if="editor" 
       :should-show="() => true"
       :tippy-options="{
+        getReferenceClientRect: getMenuButtonRect
       }"
     >
       <menu-button 
-        :width="menuButton.widthAndHeight"
-        :height="menuButton.widthAndHeight"
+        id="menu-button"
+        :width="menu.button.widthAndHeight"
+        :height="menu.button.widthAndHeight"
+        @toggleMenuList="toggleMenuList"
       />
-    </floating-menu> -->
+      <menu-list 
+        v-if="menu.button.isAvailable" 
+        @display="menu.list.isDisplayed = true"
+        @hide="menu.list.isDisplayed = false"
+        :menus="menu.list.items"
+      />
+    </floating-menu>
 
     <editor-content class="pt-9" :editor="editor" />
   </div>
 </template>
 
 <script>
-import MenuButton from '~/components/Materials/Post/Editor/MenuButton/Index.vue'
-import MenuButtonContainer from '~/components/Materials/Post/Editor/MenuButton/Container.vue'
-import { Editor, EditorContent, FloatingMenu, BubbleMenu } from '@tiptap/vue-2'
+import MenuButton from '~/components/Materials/Post/Editor/Menu/Button.vue'
+import MenuList from '~/components/Materials/Post/Editor/Menu/List.vue'
+import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
 import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
 import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
 import Heading from '@tiptap/extension-heading'
@@ -62,7 +71,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 export default {
   components: {
     MenuButton,
-    MenuButtonContainer,
+    MenuList,
     FloatingMenu,
     EditorContent,
     BubbleMenu,
@@ -83,9 +92,7 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbar: null,
-    menuButton: {
-      widthAndHeight: 40,
-    }
+    menu: null
   }),
   watch: {
     modelValue(value) {
@@ -97,6 +104,13 @@ export default {
 
       this.editor.commands.setContent(value, false)
     },
+    'menu.list.isDisplayed': function(value) {
+      if (value === true) {
+        document.addEventListener('click', this.closeMenuListIfClickedButton, false)
+      } else {
+        document.removeEventListener('click', this.closeMenuListIfClickedButton, false)
+      }
+    }
   },
   beforeMount() {
     this.editor = new Editor({
@@ -118,8 +132,6 @@ export default {
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
       },
-      onSelectionUpdate: () => {
-      },
     })
 
     this.toolbar = {
@@ -135,18 +147,101 @@ export default {
         },
       ]
     }
+
+    this.menu = {
+      button: {
+        widthAndHeight: 40,
+        left: 0,
+        isAvailable: false,
+      },
+      list: { 
+        isDisplayed: false,
+        items: [
+          {
+            type: 'image',
+            name: '画像'
+          },
+          {
+            type: 'link',
+            name: '埋め込み'
+          },
+          {
+            type: 'movie-open-plus',
+            name: '映画情報'
+          },
+          {
+            type: 'format-header-1',
+            name: '大見出し'
+          },
+          {
+            type: 'format-header-2',
+            name: '見出し'
+          },
+          {
+            type: 'format-header-3',
+            name: '小見出し'
+          },
+          {
+            type: 'format-list-bulleted',
+            name: '箇条書きリスト'
+          },
+          {
+            type: 'format-list-numbered',
+            name: '数字付きリスト'
+          },
+          {
+            type: 'format-quote-close',
+            name: '引用'
+          }
+        ]
+      }
+    }
+  },
+  mounted() {
+    window.addEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
   },
   methods: {
+    setMenuButtonLeft() {
+      const emptyP = document.getElementsByClassName('is-empty')[0]
+      const pRectLeft = emptyP.getBoundingClientRect().left
+      this.menu.button.left = pRectLeft - (this.menu.button.widthAndHeight * 3)
+    },
     /**
-     * メニューボタンの表示位置を計算する
+     * Selection の座標を取得する
      */
-    // calculateMenuButtonPosition() {
-    //   return {
-    //     width: this.menuButton.widthAndHeight,
-    //     top: 100,
-    //     left: 40,
-    //   }
-    // },
+    getMenuButtonRect() {
+      const editorView = this.editor.view
+      const { ranges } = editorView.state.selection
+      const from = Math.min(...ranges.map(range => range.$from.pos))
+      const to = Math.max(...ranges.map(range => range.$to.pos))
+
+      return this.calculateMenuButtonPosition(posToDOMRect(editorView, from, to))
+    },
+    /**
+     * Selection の座標からメニューボタンの表示位置を計算する
+     */
+    calculateMenuButtonPosition({top, height}) {
+      const halfButtonSize = this.menu.button.widthAndHeight / 2
+      const halfHeight = height / 2
+
+      return {
+        width: this.menu.button.widthAndHeight,
+        height: 0,
+        left: this.menu.button.left,
+        right: 200,
+        top: top - halfButtonSize + halfHeight,
+      }
+    },
+    toggleMenuList() {
+      this.menu.button.isAvailable = !this.menu.button.isAvailable
+    },
+    closeMenuListIfClickedButton(e) {
+      if (e.target.closest('#menu-button') === null) {
+        return this.menu.button.isAvailable = false
+      } else {
+        return 
+      }
+    },
     markContent(type) {
       switch (type) {
         case 'bold': 
@@ -166,5 +261,8 @@ export default {
   beforeDestroy() {
     this.editor.destroy()
   },
+  destroyed() {
+    window.removeEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
+  }
 }
 </script>
