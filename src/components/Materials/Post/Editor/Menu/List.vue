@@ -7,8 +7,10 @@
           mdi-{{ menu.type }}
         </v-icon>
       </v-col>
-      <v-col class="py-1 pl-8">
-        <p>{{ menu.name }}</p>
+      <v-col class="py-1 pl-8 menu-list-item-text">
+        <div class="menu-list-item-text">
+          {{ menu.name }}
+        </div>
       </v-col>
     </v-row>
     <v-row class="pa-2 menu-list-item" align-content="center">
@@ -22,7 +24,9 @@
         </i>
       </v-col>
       <v-col class="py-1 pl-8">
-        <p>区切り線</p>
+        <div class="menu-list-item-text">
+          区切り線
+        </div>
       </v-col>
     </v-row>
   </div>
@@ -63,8 +67,7 @@ export default {
     color: #b5bdda;
   }
 
-  p {
-    margin: 0;
+  .menu-list-item-text {
     padding-top: 2.5px;
     font-size: 14px !important;
   }
