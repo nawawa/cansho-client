@@ -47,6 +47,7 @@
         v-if="menu.button.isAvailable" 
         @display="menu.list.isDisplayed = true"
         @hide="menu.list.isDisplayed = false"
+        :menus="menu.list.items"
       />
     </floating-menu>
 
@@ -91,16 +92,7 @@ export default {
       'ようこそ。ご自由にお書きください。'
     ],
     toolbar: null,
-    menu: {
-      button: {
-        widthAndHeight: 40,
-        left: 0,
-        isAvailable: false,
-      },
-      list: { 
-        isDisplayed: false,
-      }
-    },
+    menu: null
   }),
   watch: {
     modelValue(value) {
@@ -154,6 +146,55 @@ export default {
           type: 'underline',
         },
       ]
+    }
+
+    this.menu = {
+      button: {
+        widthAndHeight: 40,
+        left: 0,
+        isAvailable: false,
+      },
+      list: { 
+        isDisplayed: false,
+        items: [
+          {
+            type: 'image',
+            name: '画像'
+          },
+          {
+            type: 'link',
+            name: '埋め込み'
+          },
+          {
+            type: 'movie-open-plus',
+            name: '映画情報'
+          },
+          {
+            type: 'format-header-1',
+            name: '大見出し'
+          },
+          {
+            type: 'format-header-2',
+            name: '見出し'
+          },
+          {
+            type: 'format-header-3',
+            name: '小見出し'
+          },
+          {
+            type: 'format-list-bulleted',
+            name: '箇条書きリスト'
+          },
+          {
+            type: 'format-list-numbered',
+            name: '数字付きリスト'
+          },
+          {
+            type: 'format-quote-close',
+            name: '引用'
+          }
+        ]
+      }
     }
   },
   mounted() {
