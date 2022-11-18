@@ -43,12 +43,14 @@
         :height="menu.button.widthAndHeight"
         @toggleMenuList="toggleMenuList"
       />
-      <menu-list 
-        v-if="menu.button.isAvailable" 
-        @display="menu.list.isDisplayed = true"
-        @hide="menu.list.isDisplayed = false"
-        :menus="menu.list.items"
-      />
+      <transition>
+        <menu-list 
+          v-if="menu.button.isAvailable" 
+          @display="menu.list.isDisplayed = true"
+          @hide="menu.list.isDisplayed = false"
+          :menus="menu.list.items"
+        />
+      </transition>
     </floating-menu>
 
     <editor-content class="pt-9" :editor="editor" />
