@@ -43,15 +43,15 @@
         :height="menu.button.widthAndHeight"
         @toggleMenuList="toggleMenuList"
       />
-      <transition>
-        <menu-list 
-          v-if="menu.button.isAvailable" 
-          @display="menu.list.isDisplayed = true"
-          @hide="menu.list.isDisplayed = false"
-          :menus="menu.list.items"
-        />
-      </transition>
     </floating-menu>
+    
+    <menu-list 
+      v-if="menu.button.isAvailable" 
+      @display="menu.list.isDisplayed = true"
+      @hide="menu.list.isDisplayed = false"
+      :menus="menu.list.items"
+      :transformStyleValue="menu.list.transform"
+    />
 
     <editor-content class="pt-9" :editor="editor" />
   </div>
@@ -158,6 +158,7 @@ export default {
       },
       list: { 
         isDisplayed: false,
+        transform: '',
         items: [
           {
             type: 'image',
@@ -236,6 +237,8 @@ export default {
     },
     toggleMenuList() {
       this.menu.button.isAvailable = !this.menu.button.isAvailable
+      const {transform} = document.getElementById('tippy-2').style
+      this.menu.list.transform = transform
     },
     closeMenuListIfClickedButton(e) {
       if (e.target.closest('#menu-button') === null) {

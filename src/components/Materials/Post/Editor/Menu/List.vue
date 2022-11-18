@@ -1,5 +1,5 @@
 <template>
-  <PartsEditorMenuListContainer>
+  <PartsEditorMenuListContainer :transformStyleValue="transformStyleValue">
 
     <PartsEditorMenuListHeader />
     <PartsEditorMenuListItem 
@@ -28,7 +28,8 @@
 <script>
 export default {
   props: {
-    menus: Array
+    menus: Array,
+    transformStyleValue: String
   },
   mounted() {
     this.$emit('display')
