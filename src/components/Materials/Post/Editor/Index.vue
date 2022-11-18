@@ -106,9 +106,9 @@ export default {
     },
     'menu.list.isDisplayed': function(value) {
       if (value === true) {
-        document.addEventListener('click', this.closeMenuListIfClickedButton, false)
+        document.addEventListener('mousedown', this.closeMenuListIfClickedButton, false)
       } else {
-        document.removeEventListener('click', this.closeMenuListIfClickedButton, false)
+        document.removeEventListener('mousedown', this.closeMenuListIfClickedButton, false)
       }
     }
   },
