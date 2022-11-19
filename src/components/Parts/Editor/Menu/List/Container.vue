@@ -20,7 +20,6 @@ export default {
     border: 1px solid white;
     border-radius: 4px;
     margin-left: 50px;
-    padding: 12px;
     background: var(--v-main-base);
   }
 </style>
