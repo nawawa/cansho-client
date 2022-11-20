@@ -1,5 +1,7 @@
 <template>
-  <PartsEditorMenuListContainer :transformStyleValue="transformStyleValue">
+  <PartsEditorMenuListContainer 
+    :transformStyleValue="getTransformPropertyValueFromMenuButton"
+  >
 
     <PartsEditorMenuListHeader />
     <PartsEditorMenuListItem 
@@ -29,13 +31,21 @@
 export default {
   props: {
     menus: Array,
-    transformStyleValue: String
   },
   mounted() {
     this.$emit('display')
   },
   beforeDestroy() {
     this.$emit('hide')
+  },
+  computed: {
+    /**
+     * 並べて表示するため、メニューボタンの transformプロパティの値を取得する
+     */
+    getTransformPropertyValueFromMenuButton() {
+      const {transform} = document.getElementById('tippy-2').style
+      return transform
+    },
   }
 }
 </script>
