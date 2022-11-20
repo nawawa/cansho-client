@@ -22,4 +22,11 @@ export default {
     margin-left: 50px;
     background: var(--v-main-base);
   }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .2s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
 </style>
