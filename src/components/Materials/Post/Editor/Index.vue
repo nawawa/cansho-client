@@ -258,6 +258,7 @@ export default {
       }
     },
     insertContent(type) {
+      this.editor.commands.enter()
       this.editor.commands.insertContent(`<${type}></${type}>`, {
         parseOptions: {
           preserveWhitespace: false,
