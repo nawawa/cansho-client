@@ -71,6 +71,9 @@ import Underline from '@tiptap/extension-underline'
 import HighLight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
+import ListItem from '@tiptap/extension-list-item'
+import OrderedList from '@tiptap/extension-ordered-list'
+import BulletList from '@tiptap/extension-bullet-list'
 
 export default {
   components: {
@@ -80,7 +83,7 @@ export default {
     EditorContent,
     BubbleMenu,
     BubbleMenuContentButton,
-    BubbleMenuContentContainer
+    BubbleMenuContentContainer,
   },
   props: {
     modelValue: {
@@ -130,7 +133,10 @@ export default {
         Heading.configure({
           levels: [2, 3],
         }),
-        Image
+        Image,
+        ListItem,
+        OrderedList,
+        BulletList
       ],
       content: this.modelValue,
       onUpdate: () => {
@@ -259,11 +265,12 @@ export default {
     },
     insertContent(type) {
       this.editor.commands.enter()
-      this.editor.commands.insertContent(`<${type}></${type}>`, {
-        parseOptions: {
-          preserveWhitespace: false,
-        }
-      })
+      // this.editor.commands.insertContent(`<${type}></${type}>`, {
+      //   parseOptions: {
+      //     preserveWhitespace: false,
+      //   }
+      // })
+      this.editor.commands.toggleList('bullet_list', 'list_item')
       return this.toggleMenuList()
     },
     markContent(type) {
