@@ -1686,6 +1686,11 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-bullet-list/-/extension-bullet-list-2.0.0-beta.195.tgz#fa67e34b84304dad94f9d259ae843b8244b8a99e"
   integrity sha512-vIlUUaVVVBavlSSUT/kFF1G8yHRbIHlGEPYH0MICiIEaMHk0PZsg2WZjg+iOP7SsBRNI7k7iLSx73jA2+D/RpA==
 
+"@tiptap/extension-bullet-list@^2.0.0-beta.202":
+  version "2.0.0-beta.202"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-bullet-list/-/extension-bullet-list-2.0.0-beta.202.tgz#1826ec86a83cc2feba3f90b3015c0e642a925f8c"
+  integrity sha512-Su+GvRGyW9FTBtcFjvNkkYwzDRo+1O2YTNOZi1Z/OkDqbg3g89kRue78avs0nHW7HEgdhCap+z8KtAPrie4eBg==
+
 "@tiptap/extension-code-block@^2.0.0-beta.195":
   version "2.0.0-beta.195"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-code-block/-/extension-code-block-2.0.0-beta.195.tgz#ec6accfa46b7a30a3a1edc82a996058b0fad260f"
@@ -1775,10 +1780,20 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extension-list-item/-/extension-list-item-2.0.0-beta.195.tgz#4382e0a05f2184f06ad932fd3974dd213f002d08"
   integrity sha512-6bxPpzufzr/BOd3XX9T6qfvzeXNLCetdmevstuNtce3PACisdsWSJ6mIUl8SuyOaE3rWFYb3eEuKjbpwr5f9Yw==
 
+"@tiptap/extension-list-item@^2.0.0-beta.202":
+  version "2.0.0-beta.202"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-list-item/-/extension-list-item-2.0.0-beta.202.tgz#32bc4beacb0f692abfc8283760292a6354f070dc"
+  integrity sha512-15yAsO+CCM8ievdX4oxg8kMBVFqhzVAw7pU6E8KL76kIwWCIIyVW6hU3VZdglyBVnAG0ws5/DaZ4VRFtVPRDvg==
+
 "@tiptap/extension-ordered-list@^2.0.0-beta.195":
   version "2.0.0-beta.195"
   resolved "https://registry.yarnpkg.com/@tiptap/extension-ordered-list/-/extension-ordered-list-2.0.0-beta.195.tgz#980fa6de3c17bb075ef8b179a92bde1dec7c4615"
   integrity sha512-rYxEY02kTusyZsIurWrO0hqv6rlu2Zlojfd/ZU0kT/gegfAkM/ca6csvCRuiBGej2TnCHF13XliK2IinWqfx8Q==
+
+"@tiptap/extension-ordered-list@^2.0.0-beta.202":
+  version "2.0.0-beta.202"
+  resolved "https://registry.yarnpkg.com/@tiptap/extension-ordered-list/-/extension-ordered-list-2.0.0-beta.202.tgz#5b5987d3a1c98e579071e70485db2e82bf638ed9"
+  integrity sha512-PpJn8EtS8MLZ4NN9R3crmrivbjTMHjuSE2Ab3Y9TdeR9x9DIF23O/EkunnkPUiBUx6sNADprEWJIQesgpakrtw==
 
 "@tiptap/extension-paragraph@^2.0.0-beta.195":
   version "2.0.0-beta.195"
