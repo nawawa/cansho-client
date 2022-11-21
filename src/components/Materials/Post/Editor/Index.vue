@@ -160,6 +160,9 @@ export default {
       },
       list: { 
         isDisplayed: false,
+        /**
+         * タイプはそのまま HTML タグに使う
+         */
         items: [
           {
             type:  'img',
