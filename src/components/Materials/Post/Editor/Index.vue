@@ -19,7 +19,7 @@
         </bubble-menu-content-button>
 
         <bubble-menu-content-button  
-          v-for="headingLevel in [1,2,3]" :key="headingLevel.index"
+          v-for="headingLevel in [2,3]" :key="headingLevel.index"
           :buttonType="[`heading`, { level: headingLevel }]"
           :editor="editor"
           @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
@@ -128,7 +128,7 @@ export default {
           placeholder: this.placeholders[0] // 配列からランダムに取得する
         }),
         Heading.configure({
-          levels: [1, 2, 3],
+          levels: [2, 3],
         }),
         Image
       ],
@@ -162,39 +162,43 @@ export default {
         isDisplayed: false,
         items: [
           {
-            type: 'image',
+            type:  'img',
+            iconType: 'image',
             name: '画像'
           },
           {
-            type: 'link',
+            type:  'a',
+            iconType: 'link',
             name: '埋め込み'
           },
           {
-            type: 'movie-open-plus',
+            type:  'div',
+            iconType: 'movie-open-plus',
             name: '映画情報'
           },
           {
-            type: 'format-header-1',
-            name: '大見出し'
-          },
-          {
-            type: 'format-header-2',
+            type:  'h2',
+            iconType: 'format-header-2',
             name: '見出し'
           },
           {
-            type: 'format-header-3',
+            type:  'h3',
+            iconType: 'format-header-3',
             name: '小見出し'
           },
           {
-            type: 'format-list-bulleted',
+            type:  'li',
+            iconType: 'format-list-bulleted',
             name: '箇条書きリスト'
           },
           {
-            type: 'format-list-numbered',
+            type:  'li',
+            iconType: 'format-list-numbered',
             name: '数字付きリスト'
           },
           {
-            type: 'format-quote-close',
+            type:  'figure',
+            iconType: 'format-quote-close',
             name: '引用'
           }
         ]
@@ -251,7 +255,12 @@ export default {
       }
     },
     insertContent(type) {
-      console.log(value)
+      this.editor.commands.insertContent(`<${type}></${type}>`, {
+        parseOptions: {
+          preserveWhitespace: false,
+        }
+      })
+      return this.toggleMenuList()
     },
     markContent(type) {
       switch (type) {

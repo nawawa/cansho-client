@@ -7,10 +7,10 @@
     <PartsEditorMenuListItem 
       v-for="menu in menus" :key="menu.index"
       :itemName="menu.name"
-      @click="insert"
+      @click="insert(menu.type)"
     >
       <v-icon>
-        mdi-{{ menu.type }}
+        mdi-{{ menu.iconType }}
       </v-icon>
     </PartsEditorMenuListItem>
     <PartsEditorMenuListItem
@@ -50,8 +50,8 @@ export default {
     },
   },
   methods: {
-    insert() {
-      this.insertContent('クリックしたよ')
+    insert(type) {
+      this.insertContent(type)
     }
   }
 }
