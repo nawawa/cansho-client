@@ -7,6 +7,7 @@
     <PartsEditorMenuListItem 
       v-for="menu in menus" :key="menu.index"
       :itemName="menu.name"
+      @click="insert"
     >
       <v-icon>
         mdi-{{ menu.type }}
@@ -31,6 +32,7 @@
 export default {
   props: {
     menus: Array,
+    insertContent: Function
   },
   mounted() {
     this.$emit('display')
@@ -46,6 +48,11 @@ export default {
       const {transform} = document.getElementById('tippy-2').style
       return transform
     },
+  },
+  methods: {
+    insert() {
+      this.insertContent('クリックしたよ')
+    }
   }
 }
 </script>

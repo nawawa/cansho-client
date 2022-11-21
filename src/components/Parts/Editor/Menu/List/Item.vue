@@ -1,5 +1,10 @@
 <template>
-  <v-row class="pa-2 menu-list-item ma-0" align-content="center" tag="button">
+  <v-row 
+    class="pa-2 menu-list-item ma-0" 
+    align-content="center" 
+    tag="button"
+    @click="$emit('click')"
+  >
     <v-col cols="2" class="pa-1">
       <slot />
     </v-col>

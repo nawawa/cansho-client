@@ -50,6 +50,7 @@
         v-if="menu.button.isAvailable" 
         @display="menu.list.isDisplayed = true"
         @hide="menu.list.isDisplayed = false"
+        :insertContent="insertContent"
         :menus="menu.list.items"
       />
     </transition>
@@ -239,11 +240,18 @@ export default {
       this.menu.button.isAvailable = !this.menu.button.isAvailable
     },
     closeMenuListIfClickedButton(e) {
-      if (e.target.closest('#menu-button') === null) {
+      const targetIsNotMenuButtonOrMenuListItem = 
+        e.target.closest('#menu-button') === null && 
+        e.target.closest('.menu-list-item') === null
+
+      if (targetIsNotMenuButtonOrMenuListItem) {
         return this.menu.button.isAvailable = false
       } else {
         return 
       }
+    },
+    insertContent(type) {
+      console.log(value)
     },
     markContent(type) {
       switch (type) {
