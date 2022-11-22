@@ -196,12 +196,12 @@ export default {
             name: '小見出し'
           },
           {
-            type:  'li',
+            type:  'bulletList',
             iconType: 'format-list-bulleted',
             name: '箇条書きリスト'
           },
           {
-            type:  'li',
+            type:  'orderedList',
             iconType: 'format-list-numbered',
             name: '数字付きリスト'
           },
@@ -263,16 +263,32 @@ export default {
         return 
       }
     },
+    /**
+     * 挿入ボタンで表示するメニューを使い、エディタ内に要素を挿入する
+     */
     insertContent(type) {
       this.editor.commands.enter()
-      // this.editor.commands.insertContent(`<${type}></${type}>`, {
-      //   parseOptions: {
-      //     preserveWhitespace: false,
-      //   }
-      // })
-      this.editor.commands.toggleList('bullet_list', 'list_item')
+
+      switch (type) {
+        case 'h2':
+        case 'h3':
+          this.editor.commands.insertContent(`<${type}></${type}>`)
+          break
+        case 'bulletList':
+          this.editor.chain().focus().toggleBulletList().run()
+          break
+        case 'orderedList':
+          this.editor.chain().focus().toggleOrderedList().run()
+          break
+        default:
+          return this.toggleMenuList()
+      }
+
       return this.toggleMenuList()
     },
+    /**
+     * 文字選択で表示するメニューを使い、要素を装飾する
+     */
     markContent(type) {
       switch (type) {
         case 'bold': 
