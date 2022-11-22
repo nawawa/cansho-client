@@ -45,8 +45,14 @@ export default {
      * 並べて表示するため、メニューボタンの transformプロパティの値を取得する
      */
     getTransformPropertyValueFromMenuButton() {
-      const {transform} = document.getElementById('tippy-2').style
-      return transform
+      const menuButtonElement = document.getElementById('tippy-2')
+
+      if (menuButtonElement) {
+        const {transform} = menuButtonElement.style
+        return transform
+      } else {
+        return
+      }
     },
   },
   methods: {
