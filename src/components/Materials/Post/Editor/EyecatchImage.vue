@@ -1,18 +1,10 @@
 <template>
-  <div>
-    <v-btn 
-      v-if=" eyecatchImage.alt === '' && eyecatchImage.src === '' "
-      icon 
-      outlined
-      color="#adb5bd"
+  <div class="eyecatch-image">
+    <v-file-input 
+      hide-input
+      prepend-icon="mdi-image-plus-outline"
     >
-      <v-icon 
-        small
-        color="#adb5bd"
-      >
-        mdi-image-plus-outline
-      </v-icon>
-    </v-btn>
+    </v-file-input>
     <!-- <figure>
       <img>
     </figure> -->
