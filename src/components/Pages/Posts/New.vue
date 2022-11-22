@@ -1,7 +1,7 @@
 <template>
   <div class="post-width">
     <client-only>
-      <eyecatch-image />
+      <eyecatch-image v-model="eyecatchImage" @input="setEyecatchImageSrcValue" />
       <title-column v-model="title" @enter="focusOnEditor" />
       <editor v-model="content" />
     </client-only>
@@ -23,7 +23,6 @@ export default {
     content: '',
     title: '',
     eyecatchImage: {
-      alt: '',
       src: ''
     }
   }),
@@ -43,6 +42,9 @@ export default {
     focusOnEditor() {
       this.editorElement.focus()
     },
+    setEyecatchImageSrcValue(srcValue) {
+      this.eyecatchImage.src = srcValue
+    }
   },
   destroyed() {
     window.removeEventListener('DOMContentLoaded', this.getEditorElement, false)
