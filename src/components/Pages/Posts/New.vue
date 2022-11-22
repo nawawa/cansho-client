@@ -1,6 +1,7 @@
 <template>
   <div class="post-width">
     <client-only>
+      <eyecatch-image />
       <title-column v-model="title" @enter="focusOnEditor" />
       <editor v-model="content" />
     </client-only>
@@ -8,17 +9,23 @@
 </template>
 
 <script>
+import EyecatchImage from '~/components/Materials/Post/Editor/EyecatchImage.vue'
 import TitleColumn from '~/components/Materials/Post/Editor/Title.vue'
 import Editor from '~/components/Materials/Post/Editor/Index.vue'
 export default {
   components: {
+    EyecatchImage,
     TitleColumn,
     Editor,
   },
   data: () => ({
     editorElement: null,
     content: '',
-    title: ''
+    title: '',
+    eyecatchImage: {
+      alt: '',
+      src: ''
+    }
   }),
   mounted() {
     /**
