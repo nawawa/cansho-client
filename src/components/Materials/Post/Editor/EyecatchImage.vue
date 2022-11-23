@@ -8,9 +8,9 @@
       @change="uploadImage"
     >
     </v-file-input>
-    <figure v-else>
-      <img :src="eyecatchImage.src" />
-    </figure>
+
+    <PartsEditorEyecatch v-else :src="eyecatchImage.src" />
+
   </div>
 </template>
 
