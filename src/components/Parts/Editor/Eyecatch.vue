@@ -1,5 +1,5 @@
 <template>
-  <img :src="$attrs">
+  <img :src="$attrs" alt="eyecatch">
 </template>
 
 <script>
