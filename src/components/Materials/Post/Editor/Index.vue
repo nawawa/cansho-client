@@ -56,6 +56,14 @@
     </transition>
 
     <editor-content class="pt-9" :editor="editor" />
+
+    <input 
+      id="cansho-editor-image-upload" 
+      type="file" accept="image/jpeg,image/png,image/gif" 
+      multiple="" 
+      style="display: none;"
+      @change="uploadImage"
+    >
   </div>
 </template>
 
@@ -74,6 +82,7 @@ import Placeholder from '@tiptap/extension-placeholder'
 import ListItem from '@tiptap/extension-list-item'
 import OrderedList from '@tiptap/extension-ordered-list'
 import BulletList from '@tiptap/extension-bullet-list'
+import Image from '@tiptap/extension-image'
 
 export default {
   components: {
@@ -263,6 +272,17 @@ export default {
         return 
       }
     },
+    uploadImage(selectedFile) {
+      // ローカル環境ではアップロードしない
+      const url = (this.$config.NODE_ENV === 'local') ? `https://picsum.photos/800/400`: ''
+
+      return this.displayImage(url)
+    },
+    displayImage(url) {
+      this.editor.commands.insertContent(`<img src="${url}">`)
+      this.editor.commands.enter()
+      this.editor.commands.focus('end')
+    },
     /**
      * 挿入ボタンで表示するメニューを使い、エディタ内に要素を挿入する
      */
@@ -270,6 +290,9 @@ export default {
       this.editor.commands.enter()
 
       switch (type) {
+        case 'img':
+          document.getElementById('cansho-editor-image-upload').click()
+          break
         case 'h2':
         case 'h3':
           this.editor.commands.insertContent(`<${type}></${type}>`)

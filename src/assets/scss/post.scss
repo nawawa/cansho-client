@@ -20,6 +20,16 @@
   user-select: none;
 }
 
+.ProseMirror img {
+  display: block;
+  max-width: 100%;
+  height: auto!important;
+  margin: 0 auto;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 36px;
+}
+
 /*
  * 記事画面とエディタ画面の幅を共通化するスタイル
  */
