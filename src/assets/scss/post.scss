@@ -30,6 +30,10 @@
   margin-bottom: 36px;
 }
 
+.ProseMirror-selectednode {
+  outline: 4px solid #334272;
+}
+
 /*
  * 記事画面とエディタ画面の幅を共通化するスタイル
  */
