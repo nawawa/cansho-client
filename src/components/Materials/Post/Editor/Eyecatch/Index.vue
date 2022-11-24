@@ -9,7 +9,11 @@
     >
     </v-file-input>
 
-    <PartsEditorEyecatch v-else :src="eyecatchImage.src" />
+    <PartsEditorEyecatchImage 
+      v-else 
+      :src="eyecatchImage.src"
+      :unsetEyecatch="unsetEyecatchImage"
+    />
 
   </div>
 </template>
@@ -23,7 +27,8 @@ export default {
   props: {
     eyecatchImage: {
       src: String
-    }
+    },
+    removeEyecatchImageSrcValue: Function
   },
   methods: {
     uploadImage(selectedFile) {
@@ -39,6 +44,9 @@ export default {
       } else {
         // アップロードする
       }
+    },
+    unsetEyecatchImage() {
+      this.removeEyecatchImageSrcValue()
     }
   },
 }

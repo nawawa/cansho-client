@@ -1,7 +1,11 @@
 <template>
   <div class="post-width">
     <client-only>
-      <eyecatch-image v-model="eyecatchImage" @input="setEyecatchImageSrcValue" />
+      <eyecatch 
+        v-model="eyecatchImage" 
+        @input="setEyecatchImageSrcValue"
+        :removeEyecatchImageSrcValue="removeEyecatchImageSrcValue"
+      />
       <title-column v-model="title" @enter="focusOnEditor" />
       <editor v-model="content" />
     </client-only>
@@ -9,12 +13,12 @@
 </template>
 
 <script>
-import EyecatchImage from '~/components/Materials/Post/Editor/EyecatchImage.vue'
+import Eyecatch from '~/components/Materials/Post/Editor/Eyecatch/Index.vue'
 import TitleColumn from '~/components/Materials/Post/Editor/Title.vue'
 import Editor from '~/components/Materials/Post/Editor/Index.vue'
 export default {
   components: {
-    EyecatchImage,
+    Eyecatch,
     TitleColumn,
     Editor,
   },
@@ -44,6 +48,9 @@ export default {
     },
     setEyecatchImageSrcValue(srcValue) {
       this.eyecatchImage.src = srcValue
+    },
+    removeEyecatchImageSrcValue() {
+      this.eyecatchImage.src = ''
     }
   },
   destroyed() {
