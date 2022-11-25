@@ -2,7 +2,7 @@
   <textarea 
     id="post-title"
     ref="textarea"
-    :style="styles"
+    :style="`height: ${textareaHeight};`"
     contenteditable="true" 
     placeholder="記事タイトル" 
     v-model="titleValue"
@@ -16,7 +16,7 @@
 export default {
   data: () => ({
     composing: false,
-    textareaHeight: '50px'
+    textareaHeight: '52px',
   }),
   model: {
     prop: "title",
@@ -49,9 +49,14 @@ export default {
       }
     },
     resize(){
-      this.textareaHeight = "auto"
-      this.$nextTick(()=>{
-        this.textareaHeight = `${this.$refs.textarea.scrollHeight}px`
+      this.textareaHeight = `auto`
+      console.log(this.$refs.textarea.cols)
+      const scrollHeight = this.$refs.textarea.scrollHeight
+      console.log(scrollHeight)
+
+      this.$nextTick(() => {
+        const rows = Math.ceil(Number(scrollHeight / 52))
+        this.textareaHeight = `${52 * rows}px`
       })
     }
   },
@@ -61,13 +66,14 @@ export default {
     }
   },
   mounted() {
-    this.resize()
+    
   }
 }
 </script>
 
 <style lang="scss" scoped>
   #post-title {
+    padding: 2px 0;
     width: 100%;
     min-height: 1em;
     margin: 32px 0 12px;
