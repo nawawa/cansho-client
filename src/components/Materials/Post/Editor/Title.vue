@@ -34,9 +34,6 @@ export default {
         this.$emit("input", inputValue);
       },
     },
-    styles() {
-      return { "height": this.textareaHeight}
-    }
   },
   methods: {
     cancel(e) {
@@ -53,9 +50,11 @@ export default {
 
       this.$nextTick(() => {
         const scrollHeight = this.$refs.textarea.scrollHeight
-        console.log(scrollHeight)
-        const rows = Math.ceil(Number(scrollHeight / 52))
-        this.textareaHeight = `${52 * rows}px`
+        console.log(scrollHeight) // 一文字でも入力した時点で2行分の高さになってしまう なぜ？
+        // 一行でも2行でも 100 に変わりがない
+        
+        // const rows = Math.ceil(Number(scrollHeight / 52))
+        // this.textareaHeight = `${52 * rows}px`
       })
     }
   },
