@@ -2,10 +2,12 @@
   <textarea 
     id="post-title"
     ref="textarea"
+    rows="1"
     :style="`height: ${textareaHeight};`"
     contenteditable="true" 
     placeholder="記事タイトル" 
     v-model="titleValue"
+    @keydown="resize"
     @keydown.enter.prevent="cancel"
     @compositionstart="composing=true"
     @compositionend="composing=false"
@@ -47,33 +49,28 @@ export default {
     },
     resize(){
       this.textareaHeight = `auto`
-
+      // 1行に設定してしまうことで強引に似たような挙動を実現することはできた
+      // ただ、note も最初から 2行になる事情は同じようだったので
+      // 今のままではリサイズがスムーズではないため、なんとか rows 属性以外で行数を管理する方法を探りたい
+      // 文字数で行数を判定するくらいしか思いつかないけど…
       this.$nextTick(() => {
         const scrollHeight = this.$refs.textarea.scrollHeight
-        console.log(scrollHeight) // 一文字でも入力した時点で2行分の高さになってしまう なぜ？
-        // 一行でも2行でも 100 に変わりがない
-        
-        // const rows = Math.ceil(Number(scrollHeight / 52))
-        // this.textareaHeight = `${52 * rows}px`
+        console.log(scrollHeight, this.$refs.textarea.rows)
+
+        this.textareaHeight = `${this.$refs.textarea.scrollHeight}px`
       })
     }
   },
-  watch: {
-    title() {
-      this.resize()
-    }
-  },
   mounted() {
-    
   }
 }
 </script>
 
 <style lang="scss" scoped>
   #post-title {
-    padding: 2px 0;
+    padding: 2px;
     width: 100%;
-    min-height: 1em;
+    min-height: 52px;
     margin: 32px 0 12px;
     font-size: 32px;
     font-weight: bold;
