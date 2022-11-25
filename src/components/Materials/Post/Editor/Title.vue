@@ -50,11 +50,10 @@ export default {
     },
     resize(){
       this.textareaHeight = `auto`
-      console.log(this.$refs.textarea.cols)
-      const scrollHeight = this.$refs.textarea.scrollHeight
-      console.log(scrollHeight)
 
       this.$nextTick(() => {
+        const scrollHeight = this.$refs.textarea.scrollHeight
+        console.log(scrollHeight)
         const rows = Math.ceil(Number(scrollHeight / 52))
         this.textareaHeight = `${52 * rows}px`
       })
