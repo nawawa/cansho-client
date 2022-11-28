@@ -1,13 +1,16 @@
 <template>
-  <PartsEditorMenuListContainer>
+  <PartsEditorMenuListContainer 
+    :transformStyleValue="getTransformPropertyValueFromMenuButton"
+  >
 
     <PartsEditorMenuListHeader />
     <PartsEditorMenuListItem 
       v-for="menu in menus" :key="menu.index"
       :itemName="menu.name"
+      @click="insert(menu.type)"
     >
       <v-icon>
-        mdi-{{ menu.type }}
+        mdi-{{ menu.iconType }}
       </v-icon>
     </PartsEditorMenuListItem>
     <PartsEditorMenuListItem
@@ -28,13 +31,34 @@
 <script>
 export default {
   props: {
-    menus: Array
+    menus: Array,
+    insertContent: Function
   },
   mounted() {
     this.$emit('display')
   },
   beforeDestroy() {
     this.$emit('hide')
+  },
+  computed: {
+    /**
+     * 並べて表示するため、メニューボタンの transformプロパティの値を取得する
+     */
+    getTransformPropertyValueFromMenuButton() {
+      const menuButtonElement = document.getElementById('tippy-2')
+
+      if (menuButtonElement) {
+        const {transform} = menuButtonElement.style
+        return transform
+      } else {
+        return
+      }
+    },
+  },
+  methods: {
+    insert(type) {
+      this.insertContent(type)
+    }
   }
 }
 </script>

@@ -19,7 +19,7 @@
         </bubble-menu-content-button>
 
         <bubble-menu-content-button  
-          v-for="headingLevel in [1,2,3]" :key="headingLevel.index"
+          v-for="headingLevel in [2,3]" :key="headingLevel.index"
           :buttonType="[`heading`, { level: headingLevel }]"
           :editor="editor"
           @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
@@ -43,15 +43,27 @@
         :height="menu.button.widthAndHeight"
         @toggleMenuList="toggleMenuList"
       />
+    </floating-menu>
+    
+    <transition name="fade">
       <menu-list 
         v-if="menu.button.isAvailable" 
         @display="menu.list.isDisplayed = true"
         @hide="menu.list.isDisplayed = false"
+        :insertContent="insertContent"
         :menus="menu.list.items"
       />
-    </floating-menu>
+    </transition>
 
     <editor-content class="pt-9" :editor="editor" />
+
+    <input 
+      id="cansho-editor-image-upload" 
+      type="file" accept="image/jpeg,image/png,image/gif" 
+      multiple="" 
+      style="display: none;"
+      @change="uploadImage"
+    >
   </div>
 </template>
 
@@ -67,6 +79,10 @@ import Underline from '@tiptap/extension-underline'
 import HighLight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
+import ListItem from '@tiptap/extension-list-item'
+import OrderedList from '@tiptap/extension-ordered-list'
+import BulletList from '@tiptap/extension-bullet-list'
+import Image from '@tiptap/extension-image'
 
 export default {
   components: {
@@ -76,7 +92,7 @@ export default {
     EditorContent,
     BubbleMenu,
     BubbleMenuContentButton,
-    BubbleMenuContentContainer
+    BubbleMenuContentContainer,
   },
   props: {
     modelValue: {
@@ -106,9 +122,9 @@ export default {
     },
     'menu.list.isDisplayed': function(value) {
       if (value === true) {
-        document.addEventListener('click', this.closeMenuListIfClickedButton, false)
+        document.addEventListener('mousedown', this.closeMenuListIfClickedButton, false)
       } else {
-        document.removeEventListener('click', this.closeMenuListIfClickedButton, false)
+        document.removeEventListener('mousedown', this.closeMenuListIfClickedButton, false)
       }
     }
   },
@@ -124,9 +140,12 @@ export default {
           placeholder: this.placeholders[0] // 配列からランダムに取得する
         }),
         Heading.configure({
-          levels: [1, 2, 3],
+          levels: [2, 3],
         }),
-        Image
+        Image,
+        ListItem,
+        OrderedList,
+        BulletList
       ],
       content: this.modelValue,
       onUpdate: () => {
@@ -156,41 +175,48 @@ export default {
       },
       list: { 
         isDisplayed: false,
+        /**
+         * タイプはそのまま HTML タグに使う
+         */
         items: [
           {
-            type: 'image',
+            type:  'img',
+            iconType: 'image',
             name: '画像'
           },
           {
-            type: 'link',
+            type:  'a',
+            iconType: 'link',
             name: '埋め込み'
           },
           {
-            type: 'movie-open-plus',
+            type:  'div',
+            iconType: 'movie-open-plus',
             name: '映画情報'
           },
           {
-            type: 'format-header-1',
-            name: '大見出し'
-          },
-          {
-            type: 'format-header-2',
+            type:  'h2',
+            iconType: 'format-header-2',
             name: '見出し'
           },
           {
-            type: 'format-header-3',
+            type:  'h3',
+            iconType: 'format-header-3',
             name: '小見出し'
           },
           {
-            type: 'format-list-bulleted',
+            type:  'bulletList',
+            iconType: 'format-list-bulleted',
             name: '箇条書きリスト'
           },
           {
-            type: 'format-list-numbered',
+            type:  'orderedList',
+            iconType: 'format-list-numbered',
             name: '数字付きリスト'
           },
           {
-            type: 'format-quote-close',
+            type:  'figure',
+            iconType: 'format-quote-close',
             name: '引用'
           }
         ]
@@ -236,12 +262,56 @@ export default {
       this.menu.button.isAvailable = !this.menu.button.isAvailable
     },
     closeMenuListIfClickedButton(e) {
-      if (e.target.closest('#menu-button') === null) {
+      const targetIsNotMenuButtonOrMenuListItem = 
+        e.target.closest('#menu-button') === null && 
+        e.target.closest('.menu-list-item') === null
+
+      if (targetIsNotMenuButtonOrMenuListItem) {
         return this.menu.button.isAvailable = false
       } else {
         return 
       }
     },
+    uploadImage(selectedFile) {
+      // ローカル環境ではアップロードしない
+      const url = (this.$config.NODE_ENV === 'local') ? `https://picsum.photos/800/400`: ''
+
+      return this.displayImage(url)
+    },
+    displayImage(url) {
+      this.editor.commands.insertContent(`<img src="${url}">`)
+      this.editor.commands.enter()
+      this.editor.commands.focus('end')
+    },
+    /**
+     * 挿入ボタンで表示するメニューを使い、エディタ内に要素を挿入する
+     */
+    insertContent(type) {
+      this.editor.commands.enter()
+
+      switch (type) {
+        case 'img':
+          document.getElementById('cansho-editor-image-upload').click()
+          break
+        case 'h2':
+        case 'h3':
+          this.editor.commands.insertContent(`<${type}></${type}>`)
+          break
+        case 'bulletList':
+          this.editor.chain().focus().toggleBulletList().run()
+          break
+        case 'orderedList':
+          this.editor.chain().focus().toggleOrderedList().run()
+          break
+        default:
+          return this.toggleMenuList()
+      }
+
+      return this.toggleMenuList()
+    },
+    /**
+     * 文字選択で表示するメニューを使い、要素を装飾する
+     */
     markContent(type) {
       switch (type) {
         case 'bold': 
