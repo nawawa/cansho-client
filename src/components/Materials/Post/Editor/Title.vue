@@ -2,12 +2,11 @@
   <textarea 
     id="post-title"
     ref="textarea"
-    rows="1"
     :style="`height: ${textareaHeight};`"
     contenteditable="true" 
     placeholder="記事タイトル" 
     v-model="titleValue"
-    @keydown="resize"
+    @input="resizeFromWordCount"
     @keydown.enter.prevent="cancel"
     @compositionstart="composing=true"
     @compositionend="composing=false"
@@ -19,6 +18,7 @@ export default {
   data: () => ({
     composing: false,
     textareaHeight: '52px',
+    maximumNumberOfCharactersPerLine: 0
   }),
   model: {
     prop: "title",
@@ -47,21 +47,26 @@ export default {
         this.$emit('enter')
       }
     },
-    resize(){
+    resizeFromWordCount(){
+      const textareaMinHeightNumber = 52
+      
       this.textareaHeight = `auto`
-      // 1行に設定してしまうことで強引に似たような挙動を実現することはできた
-      // ただ、note も最初から 2行になる事情は同じようだったので
-      // 今のままではリサイズがスムーズではないため、なんとか rows 属性以外で行数を管理する方法を探りたい
-      // 文字数で行数を判定するくらいしか思いつかないけど…
+      
       this.$nextTick(() => {
         const scrollHeight = this.$refs.textarea.scrollHeight
-        console.log(scrollHeight, this.$refs.textarea.rows)
-
-        this.textareaHeight = `${this.$refs.textarea.scrollHeight}px`
+        const rows = (this.$refs.textarea.value.length >= this.maximumNumberOfCharactersPerLine) ? 
+          Math.ceil(Number(scrollHeight / textareaMinHeightNumber)): 
+          1
+        this.textareaHeight = `${textareaMinHeightNumber * rows}px`
       })
     }
   },
   mounted() {
+    const styles = window.getComputedStyle(this.$refs.textarea)
+    const textareaWidth = styles.getPropertyValue('width').replace('px', '')
+    const textareaFontSize = styles.getPropertyValue('font-size').replace('px', '')
+
+    this.maximumNumberOfCharactersPerLine = textareaWidth / textareaFontSize
   }
 }
 </script>
@@ -73,6 +78,7 @@ export default {
     min-height: 52px;
     margin: 32px 0 12px;
     font-size: 32px;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", Arial, メイリオ, Meiryo, sans-serif;
     font-weight: bold;
     line-height: 1.5;
     resize: none;
@@ -80,7 +86,7 @@ export default {
     caret-color: white;
     white-space: pre-wrap;
     word-wrap: break-word;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.01em;
     white-space: pre-wrap;
     overflow-wrap: break-word;
   }
