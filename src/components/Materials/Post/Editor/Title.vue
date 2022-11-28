@@ -2,10 +2,11 @@
   <textarea 
     id="post-title"
     ref="textarea"
-    :style="styles"
+    :style="`height: ${textareaHeight};`"
     contenteditable="true" 
     placeholder="記事タイトル" 
     v-model="titleValue"
+    @input="resizeFromWordCount"
     @keydown.enter.prevent="cancel"
     @compositionstart="composing=true"
     @compositionend="composing=false"
@@ -16,7 +17,8 @@
 export default {
   data: () => ({
     composing: false,
-    textareaHeight: '50px'
+    textareaHeight: '52px',
+    maximumNumberOfCharactersPerLine: 0
   }),
   model: {
     prop: "title",
@@ -34,9 +36,6 @@ export default {
         this.$emit("input", inputValue);
       },
     },
-    styles() {
-      return { "height": this.textareaHeight}
-    }
   },
   methods: {
     cancel(e) {
@@ -48,30 +47,38 @@ export default {
         this.$emit('enter')
       }
     },
-    resize(){
-      this.textareaHeight = "auto"
-      this.$nextTick(()=>{
-        this.textareaHeight = `${this.$refs.textarea.scrollHeight}px`
+    resizeFromWordCount(){
+      const textareaMinHeightNumber = 52
+      
+      this.textareaHeight = `auto`
+      
+      this.$nextTick(() => {
+        const scrollHeight = this.$refs.textarea.scrollHeight
+        const rows = (this.$refs.textarea.value.length >= this.maximumNumberOfCharactersPerLine) ? 
+          Math.ceil(Number(scrollHeight / textareaMinHeightNumber)): 
+          1
+        this.textareaHeight = `${textareaMinHeightNumber * rows}px`
       })
     }
   },
-  watch: {
-    title() {
-      this.resize()
-    }
-  },
   mounted() {
-    this.resize()
+    const styles = window.getComputedStyle(this.$refs.textarea)
+    const textareaWidth = styles.getPropertyValue('width').replace('px', '')
+    const textareaFontSize = styles.getPropertyValue('font-size').replace('px', '')
+
+    this.maximumNumberOfCharactersPerLine = textareaWidth / textareaFontSize
   }
 }
 </script>
 
 <style lang="scss" scoped>
   #post-title {
+    padding: 2px;
     width: 100%;
-    min-height: 1em;
+    min-height: 52px;
     margin: 32px 0 12px;
     font-size: 32px;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "ヒラギノ角ゴ ProN W3", Arial, メイリオ, Meiryo, sans-serif;
     font-weight: bold;
     line-height: 1.5;
     resize: none;
@@ -79,7 +86,7 @@ export default {
     caret-color: white;
     white-space: pre-wrap;
     word-wrap: break-word;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.01em;
     white-space: pre-wrap;
     overflow-wrap: break-word;
   }

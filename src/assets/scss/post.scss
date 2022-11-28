@@ -20,6 +20,20 @@
   user-select: none;
 }
 
+.ProseMirror img {
+  display: block;
+  max-width: 100%;
+  height: auto!important;
+  margin: 0 auto;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 36px;
+}
+
+.ProseMirror-selectednode {
+  outline: 4px solid #334272;
+}
+
 /*
  * 記事画面とエディタ画面の幅を共通化するスタイル
  */
@@ -28,4 +42,12 @@
   width: 100%;
   margin-right: auto;
   margin-left: auto;
+  padding-bottom: 70vh
+}
+
+/*
+ * アイキャッチ画像のアップロードボタン
+ */
+.eyecatch-image .mdi-image-plus-outline {
+  color: #adb5bd !important;
 }

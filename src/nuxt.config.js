@@ -58,7 +58,8 @@ export default {
     },
   },
   publicRuntimeConfig: {
-    AUTH_SCHEME: process.env.AUTH_SCHEME
+    AUTH_SCHEME: process.env.AUTH_SCHEME,
+    NODE_ENV: process.env.NODE_ENV
   },
 
   auth: {
