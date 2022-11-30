@@ -6,10 +6,13 @@
         duration: 300,
       }"
       v-if="editor"
+      :shouldShow="({ editor, view, state, oldState, from, to }) => {
+        return editor.isActive('paragraph') && state.selection.empty === false
+      }"
     >
       <bubble-menu-content-container>
         <bubble-menu-content-button 
-          v-for="button in toolbar.buttons" :key="button.index"
+          v-for="button in toolbar.text.buttons" :key="button.index"
           :buttonClass="{ 'is-active': editor.isActive(button.type) }"
           :buttonType="button.type"
           :editor="editor"
@@ -154,17 +157,19 @@ export default {
     })
 
     this.toolbar = {
-      buttons: [
-        {
-          type: 'bold',
-        },
-        {
-          type: 'italic',
-        },
-        {
-          type: 'underline',
-        },
-      ]
+      text: {
+        buttons: [
+          {
+            type: 'bold',
+          },
+          {
+            type: 'italic',
+          },
+          {
+            type: 'underline',
+          },
+        ]
+      }
     }
 
     this.menu = {
