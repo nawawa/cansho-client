@@ -6,7 +6,7 @@
       v-for="menu in menus" :key="menu.index"
       @click="clickEvent(menu.type)"
     >
-      mdi-format-{{ menu.type }}
+      {{ menu.iconName }}
     </PartsEditorBubbleMenuButton>
   </PartsEditorBubbleMenuContainer>
 </template>

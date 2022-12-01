@@ -13,13 +13,6 @@
         :executeBubbleMenuButton="executeBubbleMenuButton"
       />
 
-        <!-- <bubble-menu-content-button  
-          v-for="headingLevel in [2,3]" :key="headingLevel.index"
-          :buttonType="[`heading`, { level: headingLevel }]"
-          @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
-        >
-          mdi-format-header-{{ headingLevel }}
-        </bubble-menu-content-button> -->
     </bubble-menu>
 
     <floating-menu 
@@ -153,12 +146,23 @@ export default {
         buttons: [
           {
             type: 'bold',
+            iconName: 'mdi-format-bold',
           },
           {
             type: 'italic',
+            iconName: 'mdi-format-italic',
           },
           {
             type: 'underline',
+            iconName: 'mdi-format-underline',
+          },
+          {
+            type: 'h2',
+            iconName: 'mdi-format-header-2'
+          },
+          {
+            type: 'h3',
+            iconName: 'mdi-format-header-3'
           },
         ]
       }
@@ -342,6 +346,12 @@ export default {
           break
         case 'underline': 
           this.editor.chain().focus().toggleUnderline().run()
+          break
+        case 'h2':
+          this.editor.chain().focus().toggleHeading({ level: 2 }).run()
+          break
+        case 'h3':
+          this.editor.chain().focus().toggleHeading({ level: 3 }).run()
           break
         default:
           return
