@@ -6,11 +6,12 @@
         duration: 300,
       }"
       v-if="editor"
-      :shouldShow="({ editor, view, state, oldState, from, to }) => {
-        return editor.isActive('paragraph') && state.selection.empty === false
-      }"
+      :shouldShow="isBubbleMenuShouldShow"
     >
       <bubble-menu-content-container>
+        <!-- ボタンを v-if で出し分ける -->
+        <p v-if="isOnlyActiveImage">画像</p>
+        <p v-if="isOnlyActiveTextContent">文字</p>
         <bubble-menu-content-button 
           v-for="button in toolbar.text.buttons" :key="button.index"
           :buttonClass="{ 'is-active': editor.isActive(button.type) }"
@@ -229,7 +230,22 @@ export default {
   mounted() {
     window.addEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
   },
+  computed: {
+    isOnlyActiveImage() {
+      return this.editor.isActive('image') === true && this.isOnlyActiveTextContent === false
+    },
+    isOnlyActiveTextContent() {
+      const activeParagraph = this.editor.isActive('paragraph') === true
+      const activeHeading = this.editor.isActive('heading') === true
+      const isSelectionNotEmpty = this.editor.view.state.selection.empty === false
+      const isEditorNotEmpty = this.editor.isEmpty === false
+      return (activeParagraph || activeHeading) && isSelectionNotEmpty && isEditorNotEmpty
+    },
+  },
   methods: {
+    isBubbleMenuShouldShow() {
+      return this.isOnlyActiveImage || this.isOnlyActiveTextContent
+    },
     setMenuButtonLeft() {
       const emptyP = document.getElementsByClassName('is-empty')[0]
       const pRectLeft = emptyP.getBoundingClientRect().left
