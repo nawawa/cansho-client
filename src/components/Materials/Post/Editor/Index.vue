@@ -8,27 +8,18 @@
       v-if="editor"
       :shouldShow="isBubbleMenuShouldShow"
     >
-      <bubble-menu-content-container>
-        <!-- ボタンを v-if で出し分ける -->
-        <p v-if="isOnlyActiveImage">画像</p>
-        <p v-if="isOnlyActiveTextContent">文字</p>
-        <bubble-menu-content-button 
-          v-for="button in toolbar.text.buttons" :key="button.index"
-          :buttonClass="{ 'is-active': editor.isActive(button.type) }"
-          :buttonType="button.type"
-          @click="markContent(button.type)"
-        >
-          mdi-format-{{ button.type }}
-        </bubble-menu-content-button>
+      <bubble-menu-content 
+        :menus="toggleBubbleMenuContent"
+        :executeBubbleMenuButton="executeBubbleMenuButton"
+      />
 
-        <bubble-menu-content-button  
+        <!-- <bubble-menu-content-button  
           v-for="headingLevel in [2,3]" :key="headingLevel.index"
           :buttonType="[`heading`, { level: headingLevel }]"
           @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
         >
           mdi-format-header-{{ headingLevel }}
-        </bubble-menu-content-button>
-      </bubble-menu-content-container>
+        </bubble-menu-content-button> -->
     </bubble-menu>
 
     <floating-menu 
@@ -73,8 +64,7 @@
 import MenuButton from '~/components/Materials/Post/Editor/Menu/Button.vue'
 import MenuList from '~/components/Materials/Post/Editor/Menu/List.vue'
 import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
-import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
-import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
+import BubbleMenuContent from '~/components/Materials/Post/Editor/BubbleMenu/Content/Index.vue'
 import Heading from '@tiptap/extension-heading'
 import StarterKit from '@tiptap/starter-kit'
 import Underline from '@tiptap/extension-underline'
@@ -93,8 +83,7 @@ export default {
     FloatingMenu,
     EditorContent,
     BubbleMenu,
-    BubbleMenuContentButton,
-    BubbleMenuContentContainer,
+    BubbleMenuContent
   },
   props: {
     modelValue: {
@@ -109,7 +98,7 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    toolbar: null,
+    bubbleMenu: null,
     menu: null
   }),
   watch: {
@@ -155,6 +144,10 @@ export default {
       },
     })
 
+    /**
+     * TODO: この部分を別メソッド化
+     * TODO: toolbar と bubble-menu で表記がごちゃごちゃしているのでHTMLの属性もろとも後者に統一する
+     */
     this.toolbar = {
       text: {
         buttons: [
@@ -241,6 +234,14 @@ export default {
       const isEditorNotEmpty = this.editor.isEmpty === false
       return (activeParagraph || activeHeading) && isSelectionNotEmpty && isEditorNotEmpty
     },
+    toggleBubbleMenuContent() {
+      if (this.isOnlyActiveTextContent === true) {
+        return this.toolbar.text.buttons
+      }
+      else if (this.isOnlyActiveTextContent === true) {
+        return this.toolbar.image.buttons
+      }
+    }
   },
   methods: {
     isBubbleMenuShouldShow() {
@@ -331,7 +332,7 @@ export default {
     /**
      * 文字選択で表示するメニューを使い、要素を装飾する
      */
-    markContent(type) {
+    executeBubbleMenuButton(type) {
       switch (type) {
         case 'bold': 
           this.editor.chain().focus().toggleBold().run()

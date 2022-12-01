@@ -1,6 +1,6 @@
 <template>
   <v-btn 
-    :class="buttonClass"
+    :class="$attrs"
     tile
     icon
     @click="$emit('click')"
@@ -15,8 +15,5 @@
 
 <script>
 export default {
-  props: {
-    buttonClass: Object
-  }
 }
 </script>
