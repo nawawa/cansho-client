@@ -15,7 +15,6 @@
           v-for="button in toolbar.text.buttons" :key="button.index"
           :buttonClass="{ 'is-active': editor.isActive(button.type) }"
           :buttonType="button.type"
-          :editor="editor"
           @click="markContent(button.type)"
         >
           mdi-format-{{ button.type }}
@@ -24,7 +23,6 @@
         <bubble-menu-content-button  
           v-for="headingLevel in [2,3]" :key="headingLevel.index"
           :buttonType="[`heading`, { level: headingLevel }]"
-          :editor="editor"
           @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
         >
           mdi-format-header-{{ headingLevel }}
