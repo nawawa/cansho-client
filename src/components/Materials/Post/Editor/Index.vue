@@ -8,6 +8,7 @@
       v-if="editor"
       :shouldShow="isBubbleMenuShouldShow"
     >
+      <!-- TODO: 見出しのときはボールド等を出さない -->
       <bubble-menu-content 
         :menus="toggleBubbleMenuContent"
         :executeBubbleMenuButton="executeBubbleMenuButton"
@@ -141,31 +142,29 @@ export default {
      * TODO: この部分を別メソッド化
      * TODO: toolbar と bubble-menu で表記がごちゃごちゃしているのでHTMLの属性もろとも後者に統一する
      */
-    this.toolbar = {
-      text: {
-        buttons: [
-          {
-            type: 'bold',
-            iconName: 'mdi-format-bold',
-          },
-          {
-            type: 'italic',
-            iconName: 'mdi-format-italic',
-          },
-          {
-            type: 'underline',
-            iconName: 'mdi-format-underline',
-          },
-          {
-            type: 'h2',
-            iconName: 'mdi-format-header-2'
-          },
-          {
-            type: 'h3',
-            iconName: 'mdi-format-header-3'
-          },
-        ]
-      }
+    this.bubbleMenu = {
+      buttonTypes: [
+        {
+          type: 'bold',
+          iconName: 'mdi-format-bold',
+        },
+        {
+          type: 'italic',
+          iconName: 'mdi-format-italic',
+        },
+        {
+          type: 'underline',
+          iconName: 'mdi-format-underline',
+        },
+        {
+          type: 'h2',
+          iconName: 'mdi-format-header-2'
+        },
+        {
+          type: 'h3',
+          iconName: 'mdi-format-header-3'
+        }
+      ]
     }
 
     this.menu = {
@@ -240,10 +239,14 @@ export default {
     },
     toggleBubbleMenuContent() {
       if (this.isOnlyActiveTextContent === true) {
-        return this.toolbar.text.buttons
+        const textContentEditButtons = ['bold', 'italic', 'underline', 'h2', 'h3']
+
+        return this.bubbleMenu.buttonTypes.filter((item) =>  {
+          return textContentEditButtons.includes(item.type)
+        })
       }
       else if (this.isOnlyActiveTextContent === true) {
-        return this.toolbar.image.buttons
+        return this.bubbleMenu.image.buttonTypes
       }
     }
   },
