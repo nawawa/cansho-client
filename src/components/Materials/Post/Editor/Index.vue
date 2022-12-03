@@ -239,33 +239,43 @@ export default {
     window.addEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
   },
   computed: {
+    isActiveContent() {
+      const isSelectionNotEmpty = this.editor.view.state.selection.empty === false
+      const isEditorNotEmpty = this.editor.isEmpty === false
+      return isSelectionNotEmpty && isEditorNotEmpty
+    },
     isOnlyActiveImage() {
       return this.editor.isActive('image') === true && this.isOnlyActiveTextContent === false
     },
-    isOnlyActiveTextContent() {
+    isOnlyActiveParagraph() {
       const activeParagraph = this.editor.isActive('paragraph') === true
-      const activeHeading = this.editor.isActive('heading') === true
-      const isSelectionNotEmpty = this.editor.view.state.selection.empty === false
-      const isEditorNotEmpty = this.editor.isEmpty === false
-      return (activeParagraph || activeHeading) && isSelectionNotEmpty && isEditorNotEmpty
+      return activeParagraph && this.isActiveContent === true
+    },
+    isOnlyActiveHeading() {
+      const activeParagraph = this.editor.isActive('heading') === true
+      return activeParagraph && this.isActiveContent === true
     },
     toggleBubbleMenuContent() {
-      if (this.isOnlyActiveTextContent === true) {
-        return this.filterToBeDisplayedButtons(['bold', 'italic', 'underline', 'h2', 'h3'])
+      if (this.isOnlyActiveParagraph === true) {
+        return this.filterToBeDisplayedButtons(['bold', 'italic', 'underline', 'link', 'h2', 'h3'])
       }
       else if (this.isOnlyActiveImage === true) {
         return this.filterToBeDisplayedButtons(['link', 'alt', 'delete'])
+      }
+      else if (this.isOnlyActiveHeading === true) {
+        return this.filterToBeDisplayedButtons(['h2', 'h3', 'link'])
       }
     }
   },
   methods: {
     filterToBeDisplayedButtons(toBeDisplayedButtons) {
+      console.log(toBeDisplayedButtons)
       return this.bubbleMenu.buttonTypes.filter((item) =>  {
         return toBeDisplayedButtons.includes(item.type)
       })
     },
     isBubbleMenuShouldShow() {
-      return this.isOnlyActiveImage || this.isOnlyActiveTextContent
+      return this.isActiveContent
     },
     setMenuButtonLeft() {
       const emptyP = document.getElementsByClassName('is-empty')[0]
