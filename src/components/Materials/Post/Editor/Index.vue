@@ -163,7 +163,19 @@ export default {
         {
           type: 'h3',
           iconName: 'mdi-format-header-3'
-        }
+        },
+        {
+          type: 'link',
+          iconName: 'mdi-link'
+        },
+        {
+          type: 'alt',
+          iconName: 'ALT'
+        },
+        {
+          type: 'delete',
+          iconName: 'mdi-delete'
+        },
       ]
     }
 
@@ -241,8 +253,8 @@ export default {
       if (this.isOnlyActiveTextContent === true) {
         return this.filterToBeDisplayedButtons(['bold', 'italic', 'underline', 'h2', 'h3'])
       }
-      else if (this.isOnlyActiveTextContent === true) {
-        return this.bubbleMenu.image.buttonTypes
+      else if (this.isOnlyActiveImage === true) {
+        return this.filterToBeDisplayedButtons(['link', 'alt', 'delete'])
       }
     }
   },
