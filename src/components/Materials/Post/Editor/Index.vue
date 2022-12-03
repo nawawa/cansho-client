@@ -239,11 +239,7 @@ export default {
     },
     toggleBubbleMenuContent() {
       if (this.isOnlyActiveTextContent === true) {
-        const textContentEditButtons = ['bold', 'italic', 'underline', 'h2', 'h3']
-
-        return this.bubbleMenu.buttonTypes.filter((item) =>  {
-          return textContentEditButtons.includes(item.type)
-        })
+        return this.filterToBeDisplayedButtons(['bold', 'italic', 'underline', 'h2', 'h3'])
       }
       else if (this.isOnlyActiveTextContent === true) {
         return this.bubbleMenu.image.buttonTypes
@@ -251,6 +247,11 @@ export default {
     }
   },
   methods: {
+    filterToBeDisplayedButtons(toBeDisplayedButtons) {
+      return this.bubbleMenu.buttonTypes.filter((item) =>  {
+        return toBeDisplayedButtons.includes(item.type)
+      })
+    },
     isBubbleMenuShouldShow() {
       return this.isOnlyActiveImage || this.isOnlyActiveTextContent
     },
