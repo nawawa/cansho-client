@@ -8,13 +8,12 @@
     >
       <i 
         v-if="menu.type === 'alt'"
-        class="toolbar-button v-icon notranslate mdi theme--dark"
+        class="v-icon notranslate mdi theme--dark"
       >
         <add-alt />
       </i>
       <v-icon 
         v-else
-        class="toolbar-button"
       >
         {{ menu.iconName }}
       </v-icon>
