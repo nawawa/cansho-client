@@ -5,11 +5,7 @@
     icon
     @click="$emit('click')"
   >
-    <v-icon 
-      class="toolbar-button"
-    >
-      <slot />
-    </v-icon>
+    <slot />
   </v-btn>
 </template>
 
