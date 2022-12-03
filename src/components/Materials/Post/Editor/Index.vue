@@ -269,7 +269,6 @@ export default {
   },
   methods: {
     filterToBeDisplayedButtons(toBeDisplayedButtons) {
-      console.log(toBeDisplayedButtons)
       return this.bubbleMenu.buttonTypes.filter((item) =>  {
         return toBeDisplayedButtons.includes(item.type)
       })
