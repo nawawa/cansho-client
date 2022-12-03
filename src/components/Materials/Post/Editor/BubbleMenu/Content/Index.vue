@@ -6,12 +6,11 @@
       v-for="menu in menus" :key="menu.index"
       @click="clickEvent(menu.type)"
     >
-      <i 
+      <PartsEditorAlternativeVuetifyIcon
         v-if="menu.type === 'alt'"
-        class="v-icon notranslate mdi theme--dark"
       >
         <add-alt />
-      </i>
+      </PartsEditorAlternativeVuetifyIcon>
       <v-icon 
         v-else
       >
@@ -25,7 +24,7 @@
 import AddAlt from '~/components/Parts/Editor/BubbleMenu/ButtonSVG/Alt.vue'
 export default {
   components: {
-    AddAlt
+    AddAlt,
   },
   props: {
     menus: Array,
