@@ -159,10 +159,12 @@ export default {
         },
         {
           type: 'h2',
+          activeCheckParam: ['heading', {level: 2}],
           iconName: 'mdi-format-header-2'
         },
         {
           type: 'h3',
+          activeCheckParam: ['heading', {level: 3}],
           iconName: 'mdi-format-header-3'
         },
         {
@@ -272,8 +274,8 @@ export default {
     isBubbleMenuShouldShow() {
       return this.isActiveContent
     },
-    isActiveBubbleMenuButton(menuType) {
-      return this.editor.isActive(menuType)
+    isActiveBubbleMenuButton(type, ...level) {
+      return this.editor.isActive(type, ...level)
     },
     filterToBeDisplayedButtons(toBeDisplayedButtons) {
       return this.bubbleMenu.buttonTypes.filter((item) =>  {

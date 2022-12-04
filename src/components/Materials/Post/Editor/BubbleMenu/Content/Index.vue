@@ -4,9 +4,8 @@
     <PartsEditorBubbleMenuButton 
       v-for="menu in menus" :key="menu.index"
       @click="clickEvent(menu.type)"
-      :class="{ 'is-active': isActive(menu.type) }"
+      :class="{ 'is-active': isActive(menu)}"
     >
-      <!-- h2 h3 に未対応なのをなんとかする -->
       <PartsEditorAlternativeVuetifyIcon
         v-if="menu.type === 'alt'"
       >
@@ -34,9 +33,16 @@ export default {
     isActiveBubbleMenuButton: Function
   },
   computed: {
+    /**
+     * isActive に渡す引数はひとつだったり二つだったりする
+     * ひとつのときは type を渡す
+     * ふたつのときは activeCheckParam という配列を持っているのでそれを展開して渡す
+     */
     isActive() {
-      return (menuType) => {
-        return this.isActiveBubbleMenuButton(menuType)
+      return ({ type, activeCheckParam }) => {
+        return (activeCheckParam === undefined) ? 
+          this.isActiveBubbleMenuButton(type):
+          this.isActiveBubbleMenuButton(...activeCheckParam)
       }
     }
   },
