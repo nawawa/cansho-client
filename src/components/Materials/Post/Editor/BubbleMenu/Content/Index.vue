@@ -9,7 +9,7 @@
       <PartsEditorAlternativeVuetifyIcon
         v-if="menu.type === 'alt'"
       >
-        <add-alt />
+        <add-alt-button-svg />
       </PartsEditorAlternativeVuetifyIcon>
       <v-icon 
         v-else
@@ -21,10 +21,10 @@
 </template>
 
 <script>
-import AddAlt from '~/components/Parts/Editor/BubbleMenu/ButtonSVG/Alt.vue'
+import AddAltButtonSVG from '~/components/Parts/Editor/BubbleMenu/Button/SVG/Alt.vue'
 export default {
   components: {
-    AddAlt,
+    AddAltButtonSVG,
   },
   props: {
     menus: Array,
