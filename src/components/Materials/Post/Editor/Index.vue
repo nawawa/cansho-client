@@ -351,12 +351,15 @@ export default {
         case 'h2':
         case 'h3':
           this.editor.commands.insertContent(`<${type}></${type}>`)
+          this.editor.commands.focus('end')
           break
         case 'bulletList':
           this.editor.chain().focus().toggleBulletList().run()
+          this.editor.commands.focus('end')
           break
         case 'orderedList':
           this.editor.chain().focus().toggleOrderedList().run()
+          this.editor.commands.focus('end')
           break
         default:
           return this.toggleMenuList()
