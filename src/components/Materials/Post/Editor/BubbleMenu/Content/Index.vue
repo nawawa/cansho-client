@@ -1,11 +1,12 @@
 <template>
   <PartsEditorBubbleMenuContainer>
-    <!-- class="isActive" の渡し方はいったん保留 -->
-    <!-- :buttonClass="{ 'is-active': editor.isActive(button.type) }" -->
+
     <PartsEditorBubbleMenuButton 
       v-for="menu in menus" :key="menu.index"
       @click="clickEvent(menu.type)"
+      :class="{ 'is-active': isActive(menu.type) }"
     >
+      <!-- h2 h3 に未対応なのをなんとかする -->
       <PartsEditorAlternativeVuetifyIcon
         v-if="menu.type === 'alt'"
       >
@@ -17,6 +18,7 @@
         {{ menu.iconName }}
       </v-icon>
     </PartsEditorBubbleMenuButton>
+
   </PartsEditorBubbleMenuContainer>
 </template>
 
@@ -28,7 +30,15 @@ export default {
   },
   props: {
     menus: Array,
-    executeBubbleMenuButton: Function
+    executeBubbleMenuButton: Function,
+    isActiveBubbleMenuButton: Function
+  },
+  computed: {
+    isActive() {
+      return (menuType) => {
+        return this.isActiveBubbleMenuButton(menuType)
+      }
+    }
   },
   methods: {
     clickEvent(menuType) {

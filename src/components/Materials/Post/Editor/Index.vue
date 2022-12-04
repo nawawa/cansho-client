@@ -12,6 +12,7 @@
       <bubble-menu-content 
         :menus="toggleBubbleMenuContent"
         :executeBubbleMenuButton="executeBubbleMenuButton"
+        :isActiveBubbleMenuButton="isActiveBubbleMenuButton"
       />
 
     </bubble-menu>
@@ -268,13 +269,16 @@ export default {
     }
   },
   methods: {
+    isBubbleMenuShouldShow() {
+      return this.isActiveContent
+    },
+    isActiveBubbleMenuButton(menuType) {
+      return this.editor.isActive(menuType)
+    },
     filterToBeDisplayedButtons(toBeDisplayedButtons) {
       return this.bubbleMenu.buttonTypes.filter((item) =>  {
         return toBeDisplayedButtons.includes(item.type)
       })
-    },
-    isBubbleMenuShouldShow() {
-      return this.isActiveContent
     },
     setMenuButtonLeft() {
       const emptyP = document.getElementsByClassName('is-empty')[0]
