@@ -379,15 +379,40 @@ export default {
           this.editor.chain().focus().toggleUnderline().run()
           break
         case 'h2':
+          this.resetContent()
           this.editor.chain().focus().toggleHeading({ level: 2 }).run()
           break
         case 'h3':
+          this.resetContent()
           this.editor.chain().focus().toggleHeading({ level: 3 }).run()
           break
         default:
           return
       }
     },
+    /**
+     * 見出し要素は装飾させない
+     * テキストが見出しに変換された際に装飾をリセットする
+     */
+    resetContent() {
+      ['bold', 'italic', 'underline'].forEach((markUpType) => {
+        if (this.isActiveBubbleMenuButton(markUpType) === true) {
+          switch (markUpType) {
+            case 'bold': 
+              this.editor.chain().focus().unsetBold().run()
+              break
+            case 'italic': 
+              this.editor.chain().focus().unsetItalic().run()
+              break
+            case 'underline': 
+              this.editor.chain().focus().unsetUnderline().run()
+              break
+            default:
+              return
+          }
+        }
+      })
+    }
   },
   beforeDestroy() {
     this.editor.destroy()
