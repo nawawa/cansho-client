@@ -13,3 +13,9 @@
 export default {
 }
 </script>
+
+<style lang="scss" scoped>
+  .is-active {
+    background: #7887b7;
+  }
+</style>
