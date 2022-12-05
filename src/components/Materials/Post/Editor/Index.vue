@@ -60,8 +60,13 @@ import MenuButton from '~/components/Materials/Post/Editor/Menu/Button.vue'
 import MenuList from '~/components/Materials/Post/Editor/Menu/List.vue'
 import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
 import BubbleMenuContent from '~/components/Materials/Post/Editor/BubbleMenu/Content/Index.vue'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
 import Heading from '@tiptap/extension-heading'
-import StarterKit from '@tiptap/starter-kit'
+import Bold from '@tiptap/extension-bold'
+import Italic from '@tiptap/extension-italic'
+import Strike from '@tiptap/extension-strike'
 import HighLight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -116,7 +121,30 @@ export default {
   beforeMount() {
     this.editor = new Editor({
       extensions: [
-        StarterKit,
+        Document,
+        Paragraph,
+        Text,
+        Bold.extend({
+          addKeyboardShortcuts() {
+            return { 'Mod-b': () => {
+              return this.editor.isActive('paragraph') ? this.editor.toggleBold(): false
+            }}
+          }
+        }),
+        Italic.extend({
+          addKeyboardShortcuts() {
+            return { 'Mod-i': () => {
+              return this.editor.isActive('paragraph') ? this.editor.toggleItalic(): false
+            }}
+          }
+        }),
+        Strike.extend({
+          addKeyboardShortcuts() {
+            return { 'Mod-Shift-x': () => {
+              return this.editor.isActive('paragraph') ? this.editor.toggleStrike(): false
+            }}
+          }
+        }),
         BubbleMenu,
         HighLight,
         TextAlign,
