@@ -127,21 +127,21 @@ export default {
         Bold.extend({
           addKeyboardShortcuts() {
             return { 'Mod-b': () => {
-              return this.editor.isActive('paragraph') ? this.editor.toggleBold(): false
+              return this.editor.isActive('paragraph') ? this.editor.commands.toggleBold(): false
             }}
           }
         }),
         Italic.extend({
           addKeyboardShortcuts() {
             return { 'Mod-i': () => {
-              return this.editor.isActive('paragraph') ? this.editor.toggleItalic(): false
+              return this.editor.isActive('paragraph') ? this.editor.commands.toggleItalic(): false
             }}
           }
         }),
         Strike.extend({
           addKeyboardShortcuts() {
             return { 'Mod-Shift-x': () => {
-              return this.editor.isActive('paragraph') ? this.editor.toggleStrike(): false
+              return this.editor.isActive('paragraph') ? this.editor.commands.toggleStrike(): false
             }}
           }
         }),
@@ -163,6 +163,12 @@ export default {
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
       },
+      onSelectionUpdate: () => {
+        /**
+         * 行が増えたときにボールド等の装飾が引き継がれるのを防止する
+         */
+        this.editor.chain().selectNodeForward().unsetBold().unsetItalic().unsetStrike().run()
+      }
     })
 
     /**
