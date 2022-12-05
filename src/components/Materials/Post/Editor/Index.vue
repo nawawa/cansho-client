@@ -254,7 +254,7 @@ export default {
     },
     toggleBubbleMenuContent() {
       if (this.isOnlyActiveParagraph === true) {
-        return this.filterToBeDisplayedButtons(['bold', 'italic', 'underline', 'link', 'h2', 'h3'])
+        return this.filterToBeDisplayedButtons(['bold', 'italic', 'link', 'h2', 'h3'])
       }
       else if (this.isOnlyActiveImage === true) {
         return this.filterToBeDisplayedButtons(['link', 'alt', 'delete'])
@@ -371,9 +371,6 @@ export default {
           break
         case 'italic': 
           this.editor.chain().focus().toggleItalic().run()
-          break
-        case 'underline': 
-          this.editor.chain().focus().toggleUnderline().run()
           break
         case 'h2':
           this.resetContent()
