@@ -62,7 +62,6 @@ import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@
 import BubbleMenuContent from '~/components/Materials/Post/Editor/BubbleMenu/Content/Index.vue'
 import Heading from '@tiptap/extension-heading'
 import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
 import HighLight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -119,7 +118,6 @@ export default {
       extensions: [
         StarterKit,
         BubbleMenu,
-        Underline,
         HighLight,
         TextAlign,
         Placeholder.configure({
@@ -152,10 +150,6 @@ export default {
         {
           type: 'italic',
           iconName: 'mdi-format-italic',
-        },
-        {
-          type: 'underline',
-          iconName: 'mdi-format-underline',
         },
         {
           type: 'h2',
