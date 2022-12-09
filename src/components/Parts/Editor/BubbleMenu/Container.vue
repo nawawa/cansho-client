@@ -6,10 +6,6 @@
 
 <script>
 export default {
-  props: {
-    styleAttribute: String,
-    classAttribute: String
-  }
 }
 </script>
 

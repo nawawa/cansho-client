@@ -6,27 +6,15 @@
         duration: 300,
       }"
       v-if="editor"
+      :shouldShow="isBubbleMenuShouldShow"
     >
-      <bubble-menu-content-container>
-        <bubble-menu-content-button 
-          v-for="button in toolbar.buttons" :key="button.index"
-          :buttonClass="{ 'is-active': editor.isActive(button.type) }"
-          :buttonType="button.type"
-          :editor="editor"
-          @click="markContent(button.type)"
-        >
-          mdi-format-{{ button.type }}
-        </bubble-menu-content-button>
+      <!-- TODO: 見出しのときはボールド等を出さない -->
+      <bubble-menu-content 
+        :menus="toggleBubbleMenuContent"
+        :executeBubbleMenuButton="executeBubbleMenuButton"
+        :isActiveBubbleMenuButton="isActiveBubbleMenuButton"
+      />
 
-        <bubble-menu-content-button  
-          v-for="headingLevel in [2,3]" :key="headingLevel.index"
-          :buttonType="[`heading`, { level: headingLevel }]"
-          :editor="editor"
-          @click="editor.chain().focus().toggleHeading({ level: headingLevel }).run()"
-        >
-          mdi-format-header-{{ headingLevel }}
-        </bubble-menu-content-button>
-      </bubble-menu-content-container>
     </bubble-menu>
 
     <floating-menu 
@@ -71,11 +59,14 @@
 import MenuButton from '~/components/Materials/Post/Editor/Menu/Button.vue'
 import MenuList from '~/components/Materials/Post/Editor/Menu/List.vue'
 import { Editor, EditorContent, FloatingMenu, BubbleMenu, posToDOMRect } from '@tiptap/vue-2'
-import BubbleMenuContentButton from '~/components/Materials/Post/Editor/BubbleMenu/Content/Button.vue'
-import BubbleMenuContentContainer from '~/components/Materials/Post/Editor/BubbleMenu/Content/Container.vue'
+import BubbleMenuContent from '~/components/Materials/Post/Editor/BubbleMenu/Content/Index.vue'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Text from '@tiptap/extension-text'
 import Heading from '@tiptap/extension-heading'
-import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
+import Bold from '@tiptap/extension-bold'
+import Italic from '@tiptap/extension-italic'
+import Strike from '@tiptap/extension-strike'
 import HighLight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import Placeholder from '@tiptap/extension-placeholder'
@@ -91,8 +82,7 @@ export default {
     FloatingMenu,
     EditorContent,
     BubbleMenu,
-    BubbleMenuContentButton,
-    BubbleMenuContentContainer,
+    BubbleMenuContent
   },
   props: {
     modelValue: {
@@ -107,7 +97,7 @@ export default {
     placeholders: [
       'ようこそ。ご自由にお書きください。'
     ],
-    toolbar: null,
+    bubbleMenu: null,
     menu: null
   }),
   watch: {
@@ -131,9 +121,31 @@ export default {
   beforeMount() {
     this.editor = new Editor({
       extensions: [
-        StarterKit,
+        Document,
+        Paragraph,
+        Text,
+        Bold.extend({
+          addKeyboardShortcuts() {
+            return { 'Mod-b': () => {
+              return this.editor.isActive('paragraph') ? this.editor.commands.toggleBold(): false
+            }}
+          }
+        }),
+        Italic.extend({
+          addKeyboardShortcuts() {
+            return { 'Mod-i': () => {
+              return this.editor.isActive('paragraph') ? this.editor.commands.toggleItalic(): false
+            }}
+          }
+        }),
+        Strike.extend({
+          addKeyboardShortcuts() {
+            return { 'Mod-Shift-x': () => {
+              return this.editor.isActive('paragraph') ? this.editor.commands.toggleStrike(): false
+            }}
+          }
+        }),
         BubbleMenu,
-        Underline,
         HighLight,
         TextAlign,
         Placeholder.configure({
@@ -151,18 +163,49 @@ export default {
       onUpdate: () => {
         this.$emit('input', this.editor.getHTML())
       },
+      onSelectionUpdate: () => {
+        /**
+         * 行が増えたときにボールド等の装飾が引き継がれるのを防止する
+         */
+        this.editor.chain().selectNodeForward().unsetBold().unsetItalic().unsetStrike().run()
+      }
     })
 
-    this.toolbar = {
-      buttons: [
+    /**
+     * TODO: この部分を別メソッド化
+     * TODO: toolbar と bubble-menu で表記がごちゃごちゃしているのでHTMLの属性もろとも後者に統一する
+     */
+    this.bubbleMenu = {
+      buttonTypes: [
         {
           type: 'bold',
+          iconName: 'mdi-format-bold',
         },
         {
           type: 'italic',
+          iconName: 'mdi-format-italic',
         },
         {
-          type: 'underline',
+          type: 'h2',
+          activeCheckParam: ['heading', {level: 2}],
+          iconName: 'mdi-format-header-2'
+        },
+        {
+          type: 'h3',
+          activeCheckParam: ['heading', {level: 3}],
+          iconName: 'mdi-format-header-3'
+        },
+        {
+          type: 'link',
+          iconName: 'mdi-link'
+        },
+        {
+          type: 'alt',
+          iconName: 'ALT'
+        },
+        {
+          type: 'delete',
+          iconName: 'mdi-delete'
         },
       ]
     }
@@ -226,7 +269,47 @@ export default {
   mounted() {
     window.addEventListener('DOMContentLoaded', this.setMenuButtonLeft, false)
   },
+  computed: {
+    isActiveContent() {
+      const isSelectionNotEmpty = this.editor.view.state.selection.empty === false
+      const isEditorNotEmpty = this.editor.isEmpty === false
+      return isSelectionNotEmpty && isEditorNotEmpty
+    },
+    isOnlyActiveImage() {
+      return this.editor.isActive('image') === true && this.isOnlyActiveTextContent === false
+    },
+    isOnlyActiveParagraph() {
+      const activeParagraph = this.editor.isActive('paragraph') === true
+      return activeParagraph && this.isActiveContent === true
+    },
+    isOnlyActiveHeading() {
+      const activeParagraph = this.editor.isActive('heading') === true
+      return activeParagraph && this.isActiveContent === true
+    },
+    toggleBubbleMenuContent() {
+      if (this.isOnlyActiveParagraph === true) {
+        return this.filterToBeDisplayedButtons(['bold', 'italic', 'link', 'h2', 'h3'])
+      }
+      else if (this.isOnlyActiveImage === true) {
+        return this.filterToBeDisplayedButtons(['link', 'alt', 'delete'])
+      }
+      else if (this.isOnlyActiveHeading === true) {
+        return this.filterToBeDisplayedButtons(['h2', 'h3', 'link'])
+      }
+    }
+  },
   methods: {
+    isBubbleMenuShouldShow() {
+      return this.isActiveContent
+    },
+    isActiveBubbleMenuButton(type, ...level) {
+      return this.editor.isActive(type, ...level)
+    },
+    filterToBeDisplayedButtons(toBeDisplayedButtons) {
+      return this.bubbleMenu.buttonTypes.filter((item) =>  {
+        return toBeDisplayedButtons.includes(item.type)
+      })
+    },
     setMenuButtonLeft() {
       const emptyP = document.getElementsByClassName('is-empty')[0]
       const pRectLeft = emptyP.getBoundingClientRect().left
@@ -296,12 +379,15 @@ export default {
         case 'h2':
         case 'h3':
           this.editor.commands.insertContent(`<${type}></${type}>`)
+          this.editor.commands.focus('end')
           break
         case 'bulletList':
           this.editor.chain().focus().toggleBulletList().run()
+          this.editor.commands.focus('end')
           break
         case 'orderedList':
           this.editor.chain().focus().toggleOrderedList().run()
+          this.editor.commands.focus('end')
           break
         default:
           return this.toggleMenuList()
@@ -312,7 +398,7 @@ export default {
     /**
      * 文字選択で表示するメニューを使い、要素を装飾する
      */
-    markContent(type) {
+    executeBubbleMenuButton(type) {
       switch (type) {
         case 'bold': 
           this.editor.chain().focus().toggleBold().run()
@@ -320,13 +406,41 @@ export default {
         case 'italic': 
           this.editor.chain().focus().toggleItalic().run()
           break
-        case 'underline': 
-          this.editor.chain().focus().toggleUnderline().run()
+        case 'h2':
+          this.resetContent()
+          this.editor.chain().focus().toggleHeading({ level: 2 }).run()
+          break
+        case 'h3':
+          this.resetContent()
+          this.editor.chain().focus().toggleHeading({ level: 3 }).run()
           break
         default:
           return
       }
     },
+    /**
+     * 見出し要素は装飾させない
+     * テキストが見出しに変換された際に装飾をリセットする
+     */
+    resetContent() {
+      ['bold', 'italic', 'underline'].forEach((markUpType) => {
+        if (this.isActiveBubbleMenuButton(markUpType) === true) {
+          switch (markUpType) {
+            case 'bold': 
+              this.editor.chain().focus().unsetBold().run()
+              break
+            case 'italic': 
+              this.editor.chain().focus().unsetItalic().run()
+              break
+            case 'underline': 
+              this.editor.chain().focus().unsetUnderline().run()
+              break
+            default:
+              return
+          }
+        }
+      })
+    }
   },
   beforeDestroy() {
     this.editor.destroy()
